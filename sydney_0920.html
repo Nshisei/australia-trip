@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>9/20 Blue Mountains Route Map - Offline</title>
+<style>
+:root{
+  --bg:#f5f7f8;--card:#fff;--ink:#17232d;--muted:#687681;--line:#dfe5e9;
+  --main:#0c6b58;--rail:#7a3f8c;--walk:#a76100;--transit:#1d5b93;--warn:#a33c27;
+  --forest:#e5f0df;--sky:#dceef6;--food:#b44b2a;--breakfast:#8a5a1f;--lunch:#13766a;--dinner:#8f3f58;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,-apple-system,sans-serif;line-height:1.48}
+header{background:linear-gradient(135deg,#153d62,#0b6b58);color:#fff;padding:25px 18px}
+.head{max-width:1180px;margin:auto}.eyebrow{font-weight:800;font-size:.75rem;letter-spacing:.12em;opacity:.76}
+h1{margin:3px 0 7px;font-size:clamp(1.7rem,4vw,2.8rem);line-height:1.12}header p{margin:0;opacity:.92;max-width:930px}
+.notice{max-width:1180px;margin:14px auto 0;padding:0 14px}.notice>div{background:#eef7f4;border:1px solid #cfe5de;border-radius:12px;padding:11px 13px;font-size:.84rem;color:#31574d}
+.notice.warn>div{background:#fff3ef;border-color:#efc7bc;color:#6d3428}
+.grid{max-width:1180px;margin:15px auto 28px;padding:0 14px;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr);gap:15px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 9px 25px rgba(28,40,50,.06)}
+.panelhead{padding:15px 17px 11px;border-bottom:1px solid var(--line)}.panelhead h2{font-size:1.03rem;margin:0}.panelhead p{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+.mapwrap{position:relative;background:#eaf1f4;overflow:auto}svg{width:100%;height:auto;display:block;min-width:650px}
+.map-note{padding:11px 14px;border-top:1px solid var(--line);font-size:.79rem;color:var(--muted)}
+.legend{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.95);border:1px solid #d8e1e6;border-radius:11px;padding:8px 10px;font-size:.72rem}.legend div{display:flex;align-items:center;gap:6px;margin:3px 0}.dot{width:9px;height:9px;border-radius:50%}
+.route-links{padding:10px 12px;display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.btn{display:inline-block;text-decoration:none;border:1px solid #cfe0ee;background:#eef6fb;color:#20537f;border-radius:10px;padding:8px 10px;font-size:.78rem;font-weight:800}.btn.main{background:var(--main);color:#fff;border-color:var(--main)}.btn.warn{background:#fff2ed;border-color:#efc1b4;color:#7f3627}
+.full-route-btn{flex-basis:100%;justify-content:center;text-align:center;font-size:.84rem;padding:10px 12px;background:#0b5e51!important;border-color:#0b5e51!important}
+.timeline{padding:8px 11px 13px}.stop{display:grid;grid-template-columns:67px 30px 1fr;gap:8px;padding:9px 5px;border-radius:11px;position:relative}.stop:hover{background:#f6f9fa}.time{font-weight:850;font-size:.83rem;padding-top:4px;font-variant-numeric:tabular-nums}.badge{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.74rem;font-weight:900;background:var(--main);position:relative}.stop:not(:last-child) .badge:after{content:"";position:absolute;width:2px;height:31px;background:#d9e0e4;top:27px;left:12.5px}.stop.transit .badge{background:var(--transit)}.stop.ride .badge{background:var(--rail)}.stop.walk .badge{background:var(--walk)}.stop.alert .badge{background:var(--warn)}.stop.food .badge{background:var(--food)}
+.stopbody h3{font-size:.9rem;line-height:1.3;margin:2px 0 3px}.meta{font-size:.75rem;color:var(--muted)}.tag{display:inline-block;margin-top:5px;padding:2px 7px;border-radius:999px;font-size:.67rem;background:#eef2f3;color:#59656d}.tag.ride{background:#f1e8f7;color:#663b75}.tag.walk{background:#fff0d8;color:#835000}.tag.transit{background:#e8f1f8;color:#28597f}.tag.warn{background:#fde9e3;color:#873923}.tag.food{background:#fbeae4;color:#843d27}.tag.breakfast{background:#f6ecd9;color:#76501f}.tag.lunch{background:#e3f3ef;color:#17675f}.tag.dinner{background:#f7e7ec;color:#80384e}
+.tips{margin:0 12px 13px;background:#fff7e8;border:1px solid #eedcaf;border-radius:11px;padding:10px 11px;font-size:.78rem;color:#5f4d1e}
+.section{max-width:1180px;margin:0 auto 28px;padding:0 14px}.section h2{margin:0 0 5px;font-size:1.18rem}.lead{margin:0 0 12px;color:var(--muted);font-size:.84rem}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:0 7px 20px rgba(28,40,50,.05);border-left:4px solid #557d98}.card.priority{border-left-color:var(--main)}.card.walk{border-left-color:var(--walk)}.card.ride{border-left-color:var(--rail)}.card.warn{border-left-color:var(--warn)}.card.breakfast{border-left-color:var(--breakfast)}.card.lunch{border-left-color:var(--lunch)}.card.dinner{border-left-color:var(--dinner)}.card h3{margin:0 0 7px;font-size:.98rem;line-height:1.35}.card .en{display:block;color:var(--muted);font-size:.77rem;font-weight:700;margin-top:2px}.card p{margin:7px 0;font-size:.82rem}.focus{background:#f2f6f8;border-radius:10px;padding:8px 9px;color:#40525f}.timebox{display:inline-block;margin-top:6px;font-size:.71rem;font-weight:800;border-radius:999px;padding:3px 8px;background:#edf3f6;color:#395869}
+.visual{height:180px;border-radius:11px;margin:0 0 12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;color:#fff;font-size:1.02rem;font-weight:850;letter-spacing:.02em;background:linear-gradient(145deg,#205f72,#497f63);position:relative;overflow:hidden}.visual:before,.visual:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}.visual:before{width:180px;height:180px;right:-45px;top:-55px}.visual:after{width:120px;height:120px;left:-30px;bottom:-45px}.visual.rail{background:linear-gradient(145deg,#5b316e,#8d566f)}.visual.walk{background:linear-gradient(145deg,#7a561d,#aa7931)}.visual.echo{background:linear-gradient(145deg,#285a76,#5e8a72)}.visual.breakfast{background:linear-gradient(145deg,#65461c,#a37435)}.visual.lunch{background:linear-gradient(145deg,#0e5e55,#2f8b7e)}.visual.dinner{background:linear-gradient(145deg,#713146,#a35670)}
+.alert-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px 17px;box-shadow:0 7px 20px rgba(28,40,50,.05)}.alert-item{padding:11px 0;border-bottom:1px solid var(--line)}.alert-item:last-child{border-bottom:0}.alert-item h3{font-size:.95rem;margin:0 0 5px}.alert-item p{margin:4px 0;font-size:.82rem}.alert-item a{color:#205b8c;font-weight:750;overflow-wrap:anywhere}
+.source-list{font-size:.79rem}.source-list li{margin:7px 0}.source-list a{color:#205b8c}.meal-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.meal-actions a{display:inline-block;text-decoration:none;border:1px solid #d6e0e6;background:#f4f8fa;color:#285a78;border-radius:9px;padding:7px 9px;font-size:.74rem;font-weight:800}
+footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.mapwrap{max-height:none}}
+@media(max-width:520px){header{padding:20px 14px}.grid,.section,.notice{padding-left:8px;padding-right:8px}.panel{border-radius:14px}}
+.daynav{background:#18232d;padding:0}
+.daynav-inner{max-width:1180px;margin:auto;display:flex;align-items:center;padding:0 14px}
+.daynav-days{display:flex;flex:1;justify-content:center;gap:4px;padding:8px 4px}
+.daynav-item{display:flex;flex-direction:column;align-items:center;padding:8px 18px;border-radius:10px;text-decoration:none;color:rgba(255,255,255,.6);transition:background .15s,color .15s;border:1px solid transparent}
+.daynav-item:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-item.active{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.2)}
+.daynav-date{font-size:.82rem;font-weight:800;letter-spacing:.03em}
+.daynav-label{font-size:.71rem;margin-top:1px;opacity:.85}
+.daynav-arrow{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.6);font-size:1.1rem;flex-shrink:0;transition:background .15s,color .15s}
+.daynav-arrow:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-arrow.disabled{opacity:.22;pointer-events:none;cursor:default}
+@media(max-width:520px){.daynav-item{padding:7px 10px}.daynav-label{display:none}}
+</style>
+</head>
+<body>
+<nav class="daynav">
+  <div class="daynav-inner">
+    <a class="daynav-arrow" href="sydney_0919.html">&#8592;</a>
+    <div class="daynav-days">
+      <a class="daynav-item" href="sydney_0919.html">
+        <span class="daynav-date">9/19 土</span>
+        <span class="daynav-label">シドニー</span>
+      </a>
+      <a class="daynav-item active" href="sydney_0920.html">
+        <span class="daynav-date">9/20 日</span>
+        <span class="daynav-label">ブルーマウンテン</span>
+      </a>
+      <a class="daynav-item" href="sydney_0921.html">
+        <span class="daynav-date">9/21 月</span>
+        <span class="daynav-label">シドニー Day3</span>
+      </a>
+    </div>
+    <a class="daynav-arrow" href="sydney_0921.html">&#8594;</a>
+  </div>
+</nav>
+<header>
+  <div class="head">
+    <div class="eyebrow">BLUE MOUNTAINS · SUN 20 SEP 2026</div>
+    <h1>9/20(日) ブルーマウンテン1日ルート</h1>
+    <p>Centralで朝食をテイクアウトして車内で食べ、Scenic Worldを朝いちで回ります。Railway → 谷底 → Cableway → Skyway East Station → Echo Pointで昼食 → Giant Stairway → Federal Pass → Scenic World → Sydneyへ戻り、Khao Man Kaiで夕食を取る1日ルートです。</p>
+  </div>
+</header>
+
+<div class="notice"><div>
+  <strong>この旅程のポイント：</strong> Giant Stairwayは「階段だけ見て戻る」のではなく、公式の<strong>Echo Point → Scenic World via Giant Stairway</strong>（4.7km・2〜3時間・Grade 4）として最後まで歩く前提です。朝にScenic Worldを先に体験しておくことで、午後の山歩きに十分な余白を残します。
+</div></div>
+<div class="notice warn"><div>
+  <strong>現在の注意：</strong> NSW National Parksの現行アラートでは、Giant Stairway脇の<strong>Honeymoon Bridgeは落石リスクのため閉鎖</strong>されています。Giant Stairway本体を通る際も、9/20直前にLocal alertsを再確認してください。
+</div></div>
+
+<main class="grid">
+<section class="panel">
+  <div class="panelhead">
+    <h2>ルート概略図</h2>
+    <p>地図は位置関係と移動順を示す模式図です。徒歩区間の最終判断は現地標識・公式マップを優先してください。</p>
+  </div>
+  <div class="mapwrap">
+    <svg viewBox="0 0 920 760" xmlns="http://www.w3.org/2000/svg" aria-label="Blue Mountains route schematic">
+      <rect width="920" height="760" fill="#f8faf9"/>
+      <path d="M0,0 H920 V290 C760,250 690,270 590,245 C470,215 375,225 275,250 C170,278 100,255 0,225 Z" fill="#dceef6"/>
+      <path d="M0,245 C135,275 210,300 330,282 C430,266 500,300 620,290 C720,282 820,315 920,350 V760 H0 Z" fill="#e5f0df"/>
+      <path d="M0,525 C145,470 235,500 355,485 C485,468 585,505 715,480 C800,465 865,480 920,515 V760 H0 Z" fill="#d8e8d0"/>
+      <text x="56" y="80" font-size="20" font-weight="800" fill="#45647a">Katoomba cliff top</text>
+      <text x="580" y="670" font-size="18" font-weight="800" fill="#5a7651">Jamison Valley / Federal Pass</text>
+
+      <!-- main loop -->
+      <polyline points="120,150 245,180 330,390 405,175 555,165 695,185 765,280 735,465 610,610 440,625 320,560 330,390" fill="none" stroke="#0c6b58" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".86"/>
+      <!-- rides -->
+      <line x1="245" y1="180" x2="330" y2="390" stroke="#7a3f8c" stroke-width="8" stroke-linecap="round"/>
+      <line x1="330" y1="390" x2="405" y2="175" stroke="#7a3f8c" stroke-width="8" stroke-linecap="round"/>
+      <line x1="405" y1="175" x2="555" y2="165" stroke="#7a3f8c" stroke-width="8" stroke-linecap="round"/>
+      <line x1="320" y1="560" x2="330" y2="390" stroke="#a76100" stroke-width="6" stroke-dasharray="10 8"/>
+
+      <g>
+        <circle cx="120" cy="150" r="18" fill="#1d5b93" stroke="#fff" stroke-width="4"/><text x="120" y="155" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">1</text>
+        <rect x="30" y="103" rx="8" width="188" height="30" fill="#fff" stroke="#d9e1e7"/><text x="42" y="123" font-size="12" font-weight="800" fill="#24313d">Katoomba Station</text>
+      </g>
+      <g>
+        <circle cx="245" cy="180" r="18" fill="#0c6b58" stroke="#fff" stroke-width="4"/><text x="245" y="185" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">2</text>
+        <rect x="140" y="210" rx="8" width="196" height="30" fill="#fff" stroke="#d9e1e7"/><text x="153" y="230" font-size="12" font-weight="800" fill="#24313d">Scenic World Top</text>
+      </g>
+      <g>
+        <circle cx="330" cy="390" r="18" fill="#7a3f8c" stroke="#fff" stroke-width="4"/><text x="330" y="395" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">3</text>
+        <rect x="214" y="410" rx="8" width="216" height="30" fill="#fff" stroke="#d9e1e7"/><text x="227" y="430" font-size="12" font-weight="800" fill="#24313d">Railway / Valley</text>
+      </g>
+      <g>
+        <circle cx="405" cy="175" r="18" fill="#7a3f8c" stroke="#fff" stroke-width="4"/><text x="405" y="180" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">4</text>
+        <rect x="343" y="119" rx="8" width="156" height="30" fill="#fff" stroke="#d9e1e7"/><text x="356" y="139" font-size="12" font-weight="800" fill="#24313d">Cableway Top</text>
+      </g>
+      <g>
+        <circle cx="555" cy="165" r="18" fill="#7a3f8c" stroke="#fff" stroke-width="4"/><text x="555" y="170" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">5</text>
+        <rect x="505" y="205" rx="8" width="193" height="30" fill="#fff" stroke="#d9e1e7"/><text x="518" y="225" font-size="12" font-weight="800" fill="#24313d">Skyway East Station</text>
+      </g>
+      <g>
+        <circle cx="695" cy="185" r="18" fill="#0c6b58" stroke="#fff" stroke-width="4"/><text x="695" y="190" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">6</text>
+        <rect x="642" y="125" rx="8" width="170" height="30" fill="#fff" stroke="#d9e1e7"/><text x="655" y="145" font-size="12" font-weight="800" fill="#24313d">Echo Point</text>
+      </g>
+      <g>
+        <circle cx="735" cy="465" r="18" fill="#a76100" stroke="#fff" stroke-width="4"/><text x="735" y="470" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">7</text>
+        <rect x="666" y="490" rx="8" width="190" height="30" fill="#fff" stroke="#d9e1e7"/><text x="679" y="510" font-size="12" font-weight="800" fill="#24313d">Giant Stairway</text>
+      </g>
+      <g>
+        <circle cx="610" cy="610" r="18" fill="#a76100" stroke="#fff" stroke-width="4"/><text x="610" y="615" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">8</text>
+        <rect x="630" y="595" rx="8" width="148" height="30" fill="#fff" stroke="#d9e1e7"/><text x="643" y="615" font-size="12" font-weight="800" fill="#24313d">Federal Pass</text>
+      </g>
+      <g>
+        <circle cx="320" cy="560" r="18" fill="#0c6b58" stroke="#fff" stroke-width="4"/><text x="320" y="565" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">9</text>
+        <rect x="175" y="585" rx="8" width="245" height="30" fill="#fff" stroke="#d9e1e7"/><text x="188" y="605" font-size="12" font-weight="800" fill="#24313d">Scenic World Valley return</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <div><span class="dot" style="background:#1d5b93"></span>鉄道・バス</div>
+      <div><span class="dot" style="background:#7a3f8c"></span>Scenic World rides</div>
+      <div><span class="dot" style="background:#a76100"></span>本格徒歩区間</div>
+      <div><span class="dot" style="background:#0c6b58"></span>全体ルート</div>
+    </div>
+  </div>
+  <div class="map-note">※ Giant StairwayからFederal Passを西へ進みScenic World谷底へ戻る区間は、公式NPWSルートを前提としています。現地の閉鎖・迂回表示がある場合は必ず従ってください。</div>
+  <div class="route-links">
+    <a class="btn main full-route-btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/Central+Station,+Sydney/Katoomba+Station,+Katoomba/Scenic+World,+Katoomba/Echo+Point+Lookout,+Katoomba/">🗺 市内 → Katoomba → Scenic World → Echo Point をGoogle Mapsで表示 ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://transportnsw.info/routes/details/blue-mountains-buses-network/686/64686">686 Katoomba → Scenic World / Echo Point ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/echo-point-to-scenic-world-via-giant-stairway">Giant Stairway公式ルート ↗</a>
+    <a class="btn warn" target="_blank" rel="noopener" href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/giant-stairway/local-alerts">Giant Stairway Local alerts ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=CJ%27s+Central+13+Eddy+Ave+Haymarket">☕ CJ's Central ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=The+Lookout+Echo+Point+Katoomba">🍽 The Lookout Echo Point ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Central+Station+Sydney&destination=Khao+Man+Kai+804+George+Street+Haymarket&travelmode=walking">🍚 Central → Khao Man Kai ↗</a>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panelhead">
+    <h2>当日の時刻表</h2>
+    <p>電車は9/20のTrackwork確定後にTrip Plannerで最終確定。以下は安全側の目安です。</p>
+  </div>
+  <div class="timeline">
+    <article class="stop food"><div class="time">05:50–06:05</div><div class="badge">☕</div><div class="stopbody"><h3>CJ's Centralで朝食をテイクアウト</h3><div class="meta">13 Eddy Ave。日曜5:00から営業。サンドイッチ／ロール＋コーヒーなど、車内で食べやすいものを購入。</div><span class="tag breakfast">朝食</span></div></article>
+    <article class="stop transit"><div class="time">06:15–30</div><div class="badge">1</div><div class="stopbody"><h3>Central → Katoomba</h3><div class="meta">所要の目安 約2時間。乗車後、混雑や周囲に配慮しながら朝食。9/20のTrackwork確定後にTrip Plannerで列車を最終確定。</div><span class="tag transit">BMT</span><span class="tag breakfast">車内朝食</span></div></article>
+    <article class="stop transit"><div class="time">08:15–30</div><div class="badge">2</div><div class="stopbody"><h3>Katoomba Station → Scenic World</h3><div class="meta">686系統またはタクシー。朝いち入場を優先し、バス待ちが長ければタクシー切替。</div><span class="tag transit">686 / taxi</span></div></article>
+    <article class="stop ride"><div class="time">09:00</div><div class="badge">3</div><div class="stopbody"><h3>Scenic World 入場 → Scenic Railway</h3><div class="meta">朝いちでRailwayを下り、混雑前に谷底へ。</div><span class="tag ride">Railway</span></div></article>
+    <article class="stop walk"><div class="time">09:15</div><div class="badge">4</div><div class="stopbody"><h3>谷底 Scenic Walkway</h3><div class="meta">Railway下駅 → Cableway下駅。最短10分ルートを基本にして体力を温存。</div><span class="tag walk">谷底</span></div></article>
+    <article class="stop ride"><div class="time">09:35</div><div class="badge">5</div><div class="stopbody"><h3>Scenic Cableway → Top Station</h3><div class="meta">Jamison ValleyとThree Sisters方向の眺望を楽しみながら崖上へ戻る。</div><span class="tag ride">Cableway</span></div></article>
+    <article class="stop ride"><div class="time">09:55</div><div class="badge">6</div><div class="stopbody"><h3>Scenic Skyway → East Station</h3><div class="meta">Skywayは通常約10分間隔。East Stationで下車し、ここからEcho Point方向へ徒歩。</div><span class="tag ride">Skyway</span></div></article>
+    <article class="stop walk"><div class="time">10:10</div><div class="badge">7</div><div class="stopbody"><h3>Skyway East Station → Echo Point</h3><div class="meta">Cliff Drive / Prince Henry Cliff Walk側をつなぐ。40〜50分程度を見込み、途中の展望も含める。</div><span class="tag walk">徒歩</span></div></article>
+    <article class="stop"><div class="time">11:00–11:20</div><div class="badge">8</div><div class="stopbody"><h3>Echo Point / Three Sisters</h3><div class="meta">Three SistersとJamison Valleyを見学。昼食前に写真・展望を済ませる。</div></div></article>
+    <article class="stop food"><div class="time">11:20–12:00</div><div class="badge">🍽</div><div class="stopbody"><h3>Bar NSW at The Lookout Echo Pointで昼食</h3><div class="meta">33 Echo Point Rd。毎日11:00〜18:00頃。Giant Stairway前なので、バーガーや軽食など食べ過ぎないメニューを選ぶ。混雑時は同施設のMilkbar（9:00〜17:00、テイクアウト）へ切替。</div><span class="tag lunch">昼食</span></div></article>
+    <article class="stop walk"><div class="time">12:05</div><div class="badge">9</div><div class="stopbody"><h3>Three Sisters Walk → Giant Stairway</h3><div class="meta">Echo PointからGiant Stairway上部まで約450m。ここから998段を谷底へ下る。</div><span class="tag walk">Grade 4</span></div></article>
+    <article class="stop walk"><div class="time">12:30–15:00</div><div class="badge">10</div><div class="stopbody"><h3>Giant Stairway → Federal Pass → Scenic World</h3><div class="meta">公式ルート4.7km・2〜3時間。階段下り＋Federal Passを通ってScenic World谷底へ。</div><span class="tag walk">本日の核心</span></div></article>
+    <article class="stop ride"><div class="time">15:00頃</div><div class="badge">11</div><div class="stopbody"><h3>RailwayまたはCablewayで崖上へ</h3><div class="meta">朝のパスを使って再乗車。閉園直前ではなく、十分な余裕を残して戻る。</div><span class="tag ride">再乗車</span></div></article>
+    <article class="stop transit"><div class="time">15:30–16:00</div><div class="badge">12</div><div class="stopbody"><h3>Scenic World → Katoomba Station</h3><div class="meta">686系統またはタクシー。帰りのBMTに合わせて移動。</div><span class="tag transit">移動</span></div></article>
+    <article class="stop transit"><div class="time">16:00–30</div><div class="badge">13</div><div class="stopbody"><h3>Katoomba → Central</h3><div class="meta">Trackworkがなければ約2時間が目安。乗換・代行バスがある場合は余裕を追加。</div><span class="tag transit">BMT</span></div></article>
+    <article class="stop transit"><div class="time">18:00–30</div><div class="badge">14</div><div class="stopbody"><h3>Central Station 帰着 → Haymarketへ</h3><div class="meta">到着後、George Streetを南へ。Trackworkや山歩きの遅れがあっても夕食時間に余裕あり。</div><span class="tag transit">徒歩</span></div></article>
+    <article class="stop food"><div class="time">18:40–19:40</div><div class="badge">🍚</div><div class="stopbody"><h3>Khao Man Kaiで夕食</h3><div class="meta">804 George St, Haymarket。毎日11:00〜22:30。看板のKhao Man Kai（蒸し鶏＋ガーリックライス）や、蒸し・揚げ・グリルから2種を選べるCombinationが候補。</div><span class="tag dinner">夕食</span></div></article>
+  </div>
+  <div class="tips"><strong>遅延時の削り方：</strong>①谷底Walkwayを最短10分にする → ②Echo Pointの展望を10〜15分へ短縮 → ③Bar NSWが混雑していればMilkbarのテイクアウトへ切替。<strong>Giant Stairway開始時刻が13:00を大きく超えそうなら、全踏破はやめて上部だけ往復</strong>し、686でKatoombaへ戻るのが安全です。</div>
+</section>
+</main>
+
+<section class="section">
+  <h2>朝・昼・夜の食事プラン</h2>
+  <p class="lead">観光時間を削らないことを優先し、朝は車内、昼はEcho Point、夜はCentral帰着後に配置しています。</p>
+  <div class="cards">
+    <article class="card breakfast">
+      <div class="visual breakfast">BREAKFAST<br>CJ's Central → Train</div>
+      <h3>CJ's Central<span class="en">13 Eddy Ave, Haymarket NSW 2000</span></h3>
+      <p>Central StationのEddy Avenue側にある早朝営業のテイクアウト候補。日曜は<strong>5:00〜20:00</strong>の掲載があり、6時台のBlue Mountains行きでも利用しやすいです。</p>
+      <p class="focus"><strong>この日の使い方：</strong>5:50頃にサンドイッチ／ロール＋コーヒー等を購入し、列車に乗ってから朝食。Katoomba到着後に朝食時間を取らず、Scenic Worldの朝いち入場を優先します。</p>
+      <span class="timebox">05:50–06:05 · テイクアウト</span>
+      <div class="meal-actions"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=CJ%27s+Central+13+Eddy+Ave+Haymarket">Google Maps ↗</a></div>
+    </article>
+
+    <article class="card lunch">
+      <div class="visual lunch">LUNCH<br>Bar NSW · Echo Point</div>
+      <h3>Bar NSW at The Lookout Echo Point<span class="en">33 Echo Point Rd, Katoomba NSW 2780</span></h3>
+      <p>Echo Pointの展望地点にあるため、今回のルートから寄り道せず昼食を取れます。公式案内は<strong>毎日11:00〜18:00頃</strong>。Giant Stairwayの直前なので、40分程度で食べ終える前提です。</p>
+      <p class="focus"><strong>この日の使い方：</strong>Three Sistersを見た後に昼食。バーガー、Fish &amp; Chips、Salt &amp; Pepper Squid等の現行メニューがありますが、午後の長い階段下りを考えて食べ過ぎない量にします。混雑時はMilkbar（毎日9:00〜17:00）のテイクアウトへ切替。</p>
+      <span class="timebox">11:20–12:00 · Giant Stairway前</span>
+      <div class="meal-actions"><a target="_blank" rel="noopener" href="https://thelookoutechopoint.com.au/bar-nsw/">公式ページ ↗</a><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=The+Lookout+Echo+Point+Katoomba">Google Maps ↗</a></div>
+    </article>
+
+    <article class="card dinner">
+      <div class="visual dinner">DINNER<br>Khao Man Kai · Haymarket</div>
+      <h3>Khao Man Kai<span class="en">804 George St, Haymarket NSW 2000</span></h3>
+      <p>Central Station帰着後にそのまま歩いて向かえるタイ料理店。2026年7月更新の掲載では<strong>毎日11:00〜22:30</strong>で、Blue Mountainsからの帰着が多少遅れても利用しやすいです。</p>
+      <p class="focus"><strong>おすすめ：</strong>店名にもなっている<strong>Khao Man Kai</strong>（蒸し鶏＋ガーリックライス）。しっかり食べたい場合は、蒸し鶏・揚げ鶏・グリルなどから2種類を組み合わせられる<strong>Combination</strong>も候補です。</p>
+      <span class="timebox">18:40–19:40目安 · 遅延にも強い</span>
+      <div class="meal-actions"><a target="_blank" rel="noopener" href="https://khaomankaisydney.mobi-order.com/">メニュー ↗</a><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Central+Station+Sydney&destination=Khao+Man+Kai+804+George+Street+Haymarket&travelmode=walking">Centralから徒歩ルート ↗</a></div>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>各スポットの見どころ・動き方</h2>
+  <p class="lead">「その場で何をするか」が分かるように、今回の順路に合わせて整理しています。</p>
+  <div class="cards">
+    <article class="card ride"><div class="visual rail">SCENIC RAILWAY<br>52° incline</div><h3>Scenic Railway<span class="en">Scenic World</span></h3><p>世界でも特に急勾配の旅客鉄道として知られ、公式では52°の傾斜を案内しています。今回は<strong>上から谷底へ下る方向</strong>で利用します。</p><p class="focus"><strong>見るポイント：</strong>急勾配そのものと、崖から熱帯雨林へ一気に高度を下げる感覚。朝いちに乗ることで待ち時間を抑えます。</p><span class="timebox">9:00台に優先</span></article>
+    <article class="card ride"><div class="visual rail">SCENIC CABLEWAY<br>Jamison Valley</div><h3>Scenic Cableway<span class="en">Scenic World</span></h3><p>谷底から崖上へ戻る空中ケーブル。公式では南半球でも特に急なCablewayとして案内され、Three SistersやOrphan Rock、Jamison Valleyの景色を楽しめます。</p><p class="focus"><strong>今回の役割：</strong>Railwayで下った後に、徒歩で登らず体力を温存してTop Stationへ戻ること。</p><span class="timebox">Railwayの次</span></article>
+    <article class="card ride"><div class="visual">SCENIC SKYWAY<br>270m above rainforest</div><h3>Scenic Skyway → East Station<span class="en">Scenic World</span></h3><p>世界遺産の熱帯雨林上空約270mを横断するSkyway。公式ではEast Station側との便は通常10分間隔と案内されています。</p><p class="focus"><strong>今回の使い方：</strong>Top StationからEast Stationへ抜け、Scenic Worldを往復せず、そのままEcho Point方向へ進みます。</p><span class="timebox">一筆書きの要</span></article>
+    <article class="card priority"><div class="visual echo">ECHO POINT<br>Three Sisters</div><h3>Echo Point<span class="en">Three Sisters lookout</span></h3><p>Three Sistersを正面から見る定番展望地点。ここからThree Sisters Walkを経由してGiant Stairway上部へ向かいます。</p><p class="focus"><strong>見るポイント：</strong>Three Sisters、Jamison Valley、対岸の崖。Giant Stairway前の最後のまとまった休憩・水分補給地点として使います。</p><span class="timebox">25〜30分</span></article>
+    <article class="card walk"><div class="visual walk">GIANT STAIRWAY<br>998 stairs</div><h3>Giant Stairway<span class="en">Blue Mountains National Park</span></h3><p>公式ではEcho Point近くから<strong>998段</strong>を下る階段。今回の旅程では階段を下った後、そのままFederal Passへ接続します。</p><p class="focus"><strong>注意：</strong>濡れた階段、強風、脚の疲労に注意。Honeymoon Bridgeは現行アラートで閉鎖中のため立ち入らないでください。</p><span class="timebox">Grade 4</span></article>
+    <article class="card walk"><div class="visual walk">FEDERAL PASS<br>Rainforest traverse</div><h3>Federal Pass → Scenic World<span class="en">Echo Point to Scenic World route</span></h3><p>Giant Stairwayの下から森の中を西へ進み、Katoomba Falls方面を経てScenic World谷底へ戻ります。NPWS公式ルート全体は4.7km・2〜3時間です。</p><p class="focus"><strong>今回のゴール：</strong>Scenic World谷底駅まで到達し、朝のパスでRailwayまたはCablewayに再乗車して崖上へ戻ること。</p><span class="timebox">2〜3時間枠</span></article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Trackwork・運行確認の注意書き</h2>
+  <p class="lead">9/20は日曜日です。ブルーマウンテン方面は週末Trackworkの影響を受けることがあるため、以下3段階で確認してください。</p>
+  <div class="alert-box">
+    <div class="alert-item">
+      <h3>Future Trackwork Calendar</h3>
+      <p>数週間〜数か月先の「予定」を確認するものです。Sydney Trainsだけでなく、Sydney MetroやIntercityも対象です。ただし公式にも <strong>「guide only / subject to change（あくまで予定で変更あり）」</strong> と明記されています。</p>
+      <p><a href="https://transportnsw.info/future-trackwork-calendar?utm_source=chatgpt.com" target="_blank" rel="noopener">Future Trackwork Calendar ↗</a></p>
+    </div>
+    <div class="alert-item">
+      <h3>Travel Alerts / Trackwork</h3>
+      <p>日程が近くなったらこちらのほうが重要です。路線ごとの運休区間、代行バス、時刻変更などが掲載されます。</p>
+      <p><a href="https://transportnsw.info/trip-planner/plan?excludedModes=11&from=200060&to=278020" target="_blank" rel="noopener">Central → Katoomba Trip Planner ↗</a></p>
+      <p><a href="https://transportnsw.info/alerts/route/BMT_02_76" target="_blank" rel="noopener">Blue Mountains Line Travel Alerts ↗</a></p>
+    </div>
+    <div class="alert-item">
+      <h3>Trip Planner</h3>
+      <p>実際の日付・出発駅・到着駅を入力すると、Trackworkを反映した経路が出ます。公式も「Trackwork時の代替ルート確認」にTrip Plannerを使うよう案内しています。</p>
+      <p><a href="https://transportnsw.info/trip?utm_source=chatgpt.com" target="_blank" rel="noopener">Transport for NSW Trip Planner ↗</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>直前チェック</h2>
+  <div class="cards">
+    <article class="card warn"><h3>① 9/18〜9/19に交通を再確認</h3><p>Transport for NSWは、planned trackworkは通常<strong>最大2週間程度前</strong>から利用可能と案内しています。旅行直前にはFuture CalendarではなくTravel AlertsとTrip Plannerを優先してください。</p></article>
+    <article class="card warn"><h3>② Giant StairwayのLocal alerts</h3><p>Blue Mountainsは悪天候・落石・倒木などで区間閉鎖が変わります。特にGiant StairwayとFederal Passは出発当日の朝にも公式アラートを確認してください。</p></article>
+    <article class="card"><h3>③ Scenic Worldの予約時間</h3><p>Scenic World公式FAQでは通常の週末営業時間を9:00〜17:00としていますが、営業時間は時期で変動します。9/20のチケット画面でセッション時刻を確定してください。</p></article>
+    <article class="card"><h3>④ 持ち物</h3><p>歩きやすい靴、水、軽食、薄手の防寒、雨具、モバイルバッテリー。山上はSydney CBDより体感温度が下がりやすく、Giant Stairwayでは両手が空くバッグが楽です。</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>参照情報</h2>
+  <ul class="source-list">
+    <li><a target="_blank" rel="noopener" href="https://www.scenicworld.com.au/helpful-information">Scenic World – Helpful information</a>（営業時間・最終便の考え方）</li>
+    <li><a target="_blank" rel="noopener" href="https://www.scenicworld.com.au/attractions/scenic-skyway">Scenic Skyway</a>（East Station、運行間隔）</li>
+    <li><a target="_blank" rel="noopener" href="https://www.scenicworld.com.au/attractions/scenic-cableway">Scenic Cableway</a></li>
+    <li><a target="_blank" rel="noopener" href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/echo-point-to-scenic-world-via-giant-stairway">NSW National Parks – Echo Point to Scenic World via Giant Stairway</a>（4.7km・2〜3時間・Grade 4）</li>
+    <li><a target="_blank" rel="noopener" href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/giant-stairway/local-alerts">NSW National Parks – Giant Stairway Local alerts</a></li>
+    <li><a target="_blank" rel="noopener" href="https://transportnsw.info/regional-travel/popular-destinations/visit-blue-mountains-by-train">Transport for NSW – Visit Blue Mountains by train</a></li>
+    <li><a target="_blank" rel="noopener" href="https://transportnsw.info/travel-info/ways-to-get-around/train/about-trackwork">Transport for NSW – About trackwork</a></li>
+    <li><a target="_blank" rel="noopener" href="https://www.onlinedining.com.au/venue/cjs-central">CJ's Central – venue information</a>（日曜営業時間・テイクアウト情報）</li>
+    <li><a target="_blank" rel="noopener" href="https://thelookoutechopoint.com.au/bar-nsw/">The Lookout Echo Point – Bar NSW</a>（営業時間・昼食メニュー）</li>
+    <li><a target="_blank" rel="noopener" href="https://thelookoutechopoint.com.au/milkbar/">The Lookout Echo Point – Milkbar</a>（遅延時のテイクアウト代替）</li>
+    <li><a target="_blank" rel="noopener" href="https://khaomankaisydney.mobi-order.com/">Khao Man Kai – Online menu</a>（Khao Man Kai、Combination等）</li>
+    <li><a target="_blank" rel="noopener" href="https://www.opentable.com/r/khao-man-kai-haymarket">Khao Man Kai – OpenTable listing</a>（営業時間・住所）</li>
+  </ul>
+</section>
+
+<footer>
+  <p><strong>表示について：</strong>ルート図・旅程・注意書きはHTML内に保持しているためオフラインでも確認できます。外部リンクを開く場合のみネット接続が必要です。時刻は2026/8/28時点の公開情報をもとにした計画用の目安で、9/20当日のTrip Planner・運行アラート・現地標識を優先してください。</p>
+</footer>
+</body>
+</html>

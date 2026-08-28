@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>9/21 Sydney Route Map - Day 3</title>
+<style>
+:root{
+  --bg:#f5f7f8;--card:#fff;--ink:#18232d;--muted:#687681;--line:#dfe5e9;
+  --main:#0c6b58;--optional:#b16600;--evening:#7147a8;--blue:#1d5b93;--warn:#a63b2b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,-apple-system,sans-serif;line-height:1.48}
+header{background:linear-gradient(135deg,#0b5e51,#184f82);color:#fff;padding:25px 18px}
+.head{max-width:1180px;margin:auto}
+.eyebrow{font-weight:800;font-size:.75rem;letter-spacing:.12em;opacity:.78}
+h1{margin:3px 0 7px;font-size:clamp(1.7rem,4vw,2.8rem);line-height:1.12}
+header p{margin:0;opacity:.91;max-width:930px}
+.notice{max-width:1180px;margin:14px auto 0;padding:0 14px}
+.notice>div{background:#eef7f4;border:1px solid #cfe5de;border-radius:12px;padding:11px 13px;font-size:.84rem;color:#31574d}
+.notice .alert{margin-top:8px;background:#fff3f0;border-color:#efc8c1;color:#74352b}
+.grid{max-width:1180px;margin:15px auto 30px;padding:0 14px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(330px,.8fr);gap:15px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 9px 25px rgba(28,40,50,.06)}
+.panelhead{padding:15px 17px 11px;border-bottom:1px solid var(--line)}
+.panelhead h2{font-size:1.03rem;margin:0}
+.panelhead p{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+.mapwrap{position:relative;background:#eaf1f4;overflow:auto}
+svg{width:100%;height:auto;display:block;min-width:650px}
+.map-note{padding:11px 14px;border-top:1px solid var(--line);font-size:.79rem;color:var(--muted)}
+.route-links{padding:10px 12px;display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.btn{display:inline-block;text-decoration:none;border:1px solid #cfe0ee;background:#eef6fb;color:#20537f;border-radius:10px;padding:8px 10px;font-size:.78rem;font-weight:800}
+.btn.main{background:var(--main);color:#fff;border-color:var(--main)}
+.full-route-btn{flex-basis:100%;text-align:center;font-size:.84rem;padding:10px 12px}
+.legend{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.95);border:1px solid #d8e1e6;border-radius:11px;padding:8px 10px;font-size:.72rem}
+.legend div{display:flex;align-items:center;gap:6px;margin:3px 0}
+.dot{width:9px;height:9px;border-radius:50%}
+.timeline{padding:8px 11px 13px}
+.stop{display:grid;grid-template-columns:61px 30px 1fr;gap:8px;padding:9px 5px;border-radius:11px;cursor:pointer;position:relative}
+.stop:hover{background:#f6f9fa}
+.time{font-weight:850;font-size:.85rem;padding-top:4px;font-variant-numeric:tabular-nums}
+.badge{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.74rem;font-weight:900;background:var(--main);position:relative}
+.stop:not(:last-child) .badge:after{content:"";position:absolute;width:2px;height:29px;background:#d9e0e4;top:27px;left:12.5px}
+.stop.optional .badge{background:var(--optional)}
+.stop.evening .badge{background:var(--evening)}
+.stop.warn .badge{background:var(--warn)}
+.stopbody h3{font-size:.9rem;line-height:1.3;margin:2px 0 3px}
+.meta{font-size:.75rem;color:var(--muted)}
+.tag{display:inline-block;margin-top:5px;padding:2px 7px;border-radius:999px;font-size:.67rem;background:#eef2f3;color:#59656d}
+.tag.optional{background:#fff0d8;color:#835000}
+.tag.evening{background:#f1e8fb;color:#603a8e}
+.tag.warn{background:#ffe5df;color:#8b3023}
+.tips{margin:0 12px 13px;background:#fff7e8;border:1px solid #eedcaf;border-radius:11px;padding:10px 11px;font-size:.78rem;color:#5f4d1e}
+svg .water{fill:#dbeff6}
+svg .park{fill:#e4f0df}
+svg .land{fill:#f8faf9}
+svg .road{stroke:#d6dde1;stroke-width:4;fill:none;stroke-linecap:round}
+svg .road2{stroke:#e4e9ec;stroke-width:2;fill:none}
+svg .route{fill:none;stroke:var(--main);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.84}
+svg .branch{fill:none;stroke:var(--optional);stroke-width:4;stroke-dasharray:8 8;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+svg .evening-route{fill:none;stroke:var(--evening);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+.marker-group{cursor:pointer}
+.marker-group:hover circle{filter:brightness(1.15)}
+.marker-group:hover rect{stroke:#8ca3b3;stroke-width:1.5}
+.section{max-width:1180px;margin:0 auto 28px;padding:0 14px}
+.section h2{margin:0 0 5px;font-size:1.18rem}
+.section>.lead{margin:0 0 12px;color:var(--muted);font-size:.84rem}
+.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:0 7px 20px rgba(28,40,50,.05);border-left:4px solid #557d98}
+.card.main{border-left-color:var(--main)}
+.card.optional{border-left-color:var(--optional)}
+.card.evening{border-left-color:var(--evening)}
+.card.warn{border-left-color:var(--warn)}
+.card h3{margin:0 0 7px;font-size:.98rem;line-height:1.35}
+.card .en{display:block;color:var(--muted);font-size:.77rem;font-weight:700;margin-top:2px}
+.card p{margin:7px 0;font-size:.82rem}
+.card .focus{background:#f2f6f8;border-radius:10px;padding:8px 9px;color:#40525f}
+.card .timebox{display:inline-block;margin-top:6px;font-size:.71rem;font-weight:800;border-radius:999px;padding:3px 8px;background:#edf3f6;color:#395869}
+.photo{width:100%;height:205px;object-fit:cover;border-radius:11px;margin:0 0 12px;display:block;background:#e8edf0}
+.photo-credit{font-size:.66rem;color:var(--muted);margin:-7px 0 9px}
+.source-list{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:.78rem}
+.source-list a{color:#245a89}
+footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.mapwrap{max-height:none}}
+@media(max-width:720px){.card-grid{grid-template-columns:1fr}}
+@media(max-width:520px){header{padding:20px 14px}.grid{padding:0 8px}.notice{padding:0 8px}.panel{border-radius:14px}}
+.daynav{background:#18232d;padding:0}
+.daynav-inner{max-width:1180px;margin:auto;display:flex;align-items:center;padding:0 14px}
+.daynav-days{display:flex;flex:1;justify-content:center;gap:4px;padding:8px 4px}
+.daynav-item{display:flex;flex-direction:column;align-items:center;padding:8px 18px;border-radius:10px;text-decoration:none;color:rgba(255,255,255,.6);transition:background .15s,color .15s;border:1px solid transparent}
+.daynav-item:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-item.active{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.2)}
+.daynav-date{font-size:.82rem;font-weight:800;letter-spacing:.03em}
+.daynav-label{font-size:.71rem;margin-top:1px;opacity:.85}
+.daynav-arrow{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.6);font-size:1.1rem;flex-shrink:0;transition:background .15s,color .15s}
+.daynav-arrow:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-arrow.disabled{opacity:.22;pointer-events:none;cursor:default}
+@media(max-width:520px){.daynav-item{padding:7px 10px}.daynav-label{display:none}}
+</style>
+</head>
+<body>
+<nav class="daynav">
+  <div class="daynav-inner">
+    <a class="daynav-arrow" href="sydney_0920.html">&#8592;</a>
+    <div class="daynav-days">
+      <a class="daynav-item" href="sydney_0919.html">
+        <span class="daynav-date">9/19 土</span>
+        <span class="daynav-label">シドニー</span>
+      </a>
+      <a class="daynav-item" href="sydney_0920.html">
+        <span class="daynav-date">9/20 日</span>
+        <span class="daynav-label">ブルーマウンテン</span>
+      </a>
+      <a class="daynav-item active" href="sydney_0921.html">
+        <span class="daynav-date">9/21 月</span>
+        <span class="daynav-label">シドニー Day3</span>
+      </a>
+    </div>
+    <span class="daynav-arrow disabled">&#8594;</span>
+  </div>
+</nav>
+<header>
+<div class="head">
+  <div class="eyebrow">SYDNEY · MON 21 SEP 2026 · DAY 3</div>
+  <h1>9/21(月) シドニー観光ルート</h1>
+  <p>bills → Bourke Street Bakery → Sydney Park Skate Park → シドニー大学 → オペラハウス日本語ツアー → The Rocks周辺で昼食 → Bondi Beach または初日の残り → 新Sydney Fish Marketで夕食。</p>
+</div>
+</header>
+
+<div class="notice">
+  <div><strong>おすすめは12:00の日本語ツアー。</strong> 公式案内では日本語ツアーは毎日11:00 / 12:00 / 13:30 / 14:30 / 15:30発（実施状況・空席は変動）です。朝の南西エリアを回ってから移動するため、12:00枠が最も余裕を作りやすい構成です。</div>
+  <div class="alert"><strong>The Rocks Cafeは要注意：</strong> 公式サイトは営業中の表示が残っていますが、2026年8月22日付の最近の旅行者投稿には「翌日に閉店」とする報告があり、地図系リスティングでも一時休業表示が出ています。9/21に利用できる前提にはせず、直前確認または同エリアの代替ランチを準備してください。</div>
+</div>
+
+<main class="grid">
+<section class="panel">
+  <div class="panelhead">
+    <h2>ルート地図</h2>
+    <p>北が上の概略位置図。午後は「Bondi Beach」と「初日の残り」の2分岐です。</p>
+  </div>
+  <div class="mapwrap">
+    <svg viewBox="0 0 920 760" xmlns="http://www.w3.org/2000/svg" aria-label="Sydney day 3 route map">
+      <rect width="920" height="760" class="land"/>
+      <path class="water" d="M510,0 C590,90 560,185 640,230 C710,270 810,240 920,270 L920,0 Z"/>
+      <path class="water" d="M760,330 C815,355 865,360 920,345 L920,565 C870,540 820,535 770,550 C745,505 745,405 760,330 Z"/>
+      <path class="park" d="M78,525 C140,500 215,520 230,585 C240,640 198,700 110,705 C74,660 60,588 78,525 Z"/>
+      <path class="road" d="M335,110 L348,675"/>
+      <path class="road" d="M175,135 L178,675"/>
+      <path class="road2" d="M115,275 L690,280"/>
+      <path class="road2" d="M105,390 L810,400"/>
+      <path class="road2" d="M110,505 L835,515"/>
+      <text x="365" y="300" font-size="10" fill="#9aa5ad" transform="rotate(88 365 300)">CBD / Crown St axis</text>
+      <text x="600" y="80" font-size="12" fill="#7093a4" font-weight="700">Sydney Harbour</text>
+      <text x="768" y="390" font-size="11" fill="#7093a4" font-weight="700">Bondi / Pacific</text>
+      <text x="92" y="585" font-size="11" fill="#73936b" font-weight="700">Sydney Park</text>
+
+      <!-- Main morning route -->
+      <polyline class="route" points="344.2,366.2 350.7,415.9 131.3,611.8 160.2,383.5 353.1,113.0 310.2,137.3"/>
+      <!-- Bondi branch -->
+      <polyline class="branch" points="310.2,137.3 799.6,435.4 175.4,279.1"/>
+      <!-- Leftover branch -->
+      <polyline class="branch" points="310.2,137.3 310.9,240.4 175.4,279.1"/>
+      <!-- Final evening emphasize -->
+      <polyline class="evening-route" points="799.6,435.4 175.4,279.1"/>
+
+      <!-- Markers -->
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney')">
+        <circle cx="344.2" cy="366.2" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="344.2" y="370.4" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">1</text>
+        <rect x="362" y="348" rx="7" width="105" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="369" y="365" font-size="11" font-weight="700" fill="#24313d">bills Surry Hills</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills')">
+        <circle cx="350.7" cy="415.9" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="350.7" y="420.1" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">2</text>
+        <rect x="369" y="406" rx="7" width="174" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="376" y="423" font-size="11" font-weight="700" fill="#24313d">Bourke Street Bakery</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park')">
+        <circle cx="131.3" cy="611.8" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="131.3" y="616.0" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">3</text>
+        <rect x="149" y="596" rx="7" width="165" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="156" y="613" font-size="11" font-weight="700" fill="#24313d">Sydney Park Skate Park</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle')">
+        <circle cx="160.2" cy="383.5" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="160.2" y="387.7" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">4</text>
+        <rect x="72" y="343" rx="7" width="160" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="79" y="360" font-size="11" font-weight="700" fill="#24313d">University of Sydney</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+        <circle cx="353.1" cy="113.0" r="15" fill="#1d5b93" stroke="white" stroke-width="4"/>
+        <text x="353.1" y="117.2" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">5</text>
+        <rect x="372" y="99" rx="7" width="143" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="379" y="116" font-size="11" font-weight="700" fill="#24313d">Sydney Opera House</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=The+Rocks+Cafe+Sydney')">
+        <circle cx="310.2" cy="137.3" r="15" fill="#a63b2b" stroke="white" stroke-width="4"/>
+        <text x="310.2" y="141.5" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">6</text>
+        <rect x="135" y="114" rx="7" width="155" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="142" y="131" font-size="11" font-weight="700" fill="#24313d">The Rocks Cafe ※要確認</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney')">
+        <circle cx="799.6" cy="435.4" r="15" fill="#b16600" stroke="white" stroke-width="4"/>
+        <text x="799.6" y="439.6" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">7A</text>
+        <rect x="650" y="451" rx="7" width="116" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="657" y="468" font-size="11" font-weight="700" fill="#24313d">Bondi Beach</text>
+      </g>
+
+      <g class="marker-group">
+        <circle cx="310.9" cy="240.4" r="15" fill="#b16600" stroke="white" stroke-width="4"/>
+        <text x="310.9" y="244.6" text-anchor="middle" font-size="9.5" font-weight="800" fill="white">7B</text>
+        <rect x="329" y="228" rx="7" width="142" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="336" y="245" font-size="11" font-weight="700" fill="#24313d">初日の残り（CBD）</text>
+      </g>
+
+      <g class="marker-group" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe')">
+        <circle cx="175.4" cy="279.1" r="15" fill="#7147a8" stroke="white" stroke-width="4"/>
+        <text x="175.4" y="283.3" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">8</text>
+        <rect x="52" y="248" rx="7" width="184" height="24" fill="white" fill-opacity=".93" stroke="#d9e1e7"/>
+        <text x="59" y="265" font-size="11" font-weight="700" fill="#24313d">New Sydney Fish Market</text>
+      </g>
+
+      <g transform="translate(850,95)">
+        <path d="M0,26 L10,0 L20,26 L10,20 Z" fill="#25323c"/>
+        <text x="10" y="-7" text-anchor="middle" font-size="13" font-weight="800" fill="#25323c">N</text>
+      </g>
+    </svg>
+
+    <div class="legend">
+      <div><span class="dot" style="background:#0c6b58"></span>午前メイン</div>
+      <div><span class="dot" style="background:#b16600"></span>午後の選択</div>
+      <div><span class="dot" style="background:#7147a8"></span>夕食</div>
+      <div><span class="dot" style="background:#a63b2b"></span>要直前確認</div>
+    </div>
+  </div>
+
+  <div class="map-note">※ 地図は位置関係を把握するための概略図です。道路・鉄道路線そのものは再現していません。午後のBondiルートは東へ大きく移動するため、初日の残りが多い場合は7Bの方が効率的です。</div>
+
+  <div class="route-links">
+    <a class="btn main full-route-btn" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/bills+Surry+Hills/Bourke+Street+Bakery+Surry+Hills/Sydney+Park+Skate+Park/University+of+Sydney/Sydney+Opera+House/The+Rocks+Cafe/Bondi+Beach/Sydney+Fish+Market,+1+Bridge+Road,+Glebe/">
+       🗺 Bondi込みの全区間ルートをGoogle Mapsで表示 ↗
+    </a>
+    <a class="btn main" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=bills+Surry+Hills&destination=University+of+Sydney&waypoints=Bourke+Street+Bakery+Surry+Hills%7CSydney+Park+Skate+Park&travelmode=transit">午前ルート ↗</a>
+    <a class="btn" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=University+of+Sydney&destination=Sydney+Opera+House&travelmode=transit">大学 → オペラハウス ↗</a>
+    <a class="btn" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=Circular+Quay+Sydney&destination=Bondi+Beach&travelmode=transit">Circular Quay → Bondi ↗</a>
+    <a class="btn" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/?api=1&origin=Bondi+Beach&destination=Sydney+Fish+Market+1+Bridge+Road+Glebe&travelmode=transit">Bondi → Fish Market ↗</a>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panelhead">
+    <h2>おすすめ時刻表</h2>
+    <p>12:00日本語ツアーを前提。公共交通は当日の遅延を見込み、5〜10分の余白を含めています。</p>
+  </div>
+
+  <div class="timeline">
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney')">
+      <div class="time">07:00</div><div class="badge">1</div>
+      <div class="stopbody"><h3>bills Surry Hills / 朝食</h3><div class="meta">45〜50分 · 開店7:00 · リコッタホットケーキやスクランブルエッグ系が定番</div></div>
+    </article>
+
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills')">
+      <div class="time">07:55</div><div class="badge">2</div>
+      <div class="stopbody"><h3>Bourke Street Bakery Surry Hills</h3><div class="meta">15分 · billsから徒歩約10分想定 · 午後に戻るより朝に寄る方が動線がきれい</div><span class="tag">テイクアウト推奨</span></div>
+    </article>
+
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park')">
+      <div class="time">08:40</div><div class="badge">3</div>
+      <div class="stopbody"><h3>Sydney Park Skate Park</h3><div class="meta">30分 · 7:00〜21:00 · 見学中心なら30分で十分</div></div>
+    </article>
+
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle')">
+      <div class="time">09:35</div><div class="badge">4</div>
+      <div class="stopbody"><h3>シドニー大学 / University of Sydney</h3><div class="meta">約60分 · Quadrangle / Great Hall周辺を中心に見る</div></div>
+    </article>
+
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+      <div class="time">11:15</div><div class="badge" style="background:#1d5b93">5</div>
+      <div class="stopbody"><h3>シドニー・オペラハウス到着</h3><div class="meta">外観・写真 → 11:45までにWelcome Centreでチェックイン</div></div>
+    </article>
+
+    <article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+      <div class="time">12:00</div><div class="badge" style="background:#1d5b93">▶</div>
+      <div class="stopbody"><h3>日本語ツアー</h3><div class="meta">約30分 · 最大約1.5km / 約200段の階段 · 開始15分前チェックイン必須</div><span class="tag">要事前予約</span></div>
+    </article>
+
+    <article class="stop warn" onclick="openMap('https://www.google.com/maps/search/?api=1&query=The+Rocks+Cafe+Sydney')">
+      <div class="time">12:45</div><div class="badge">6</div>
+      <div class="stopbody"><h3>The Rocks Cafe / 昼食</h3><div class="meta">約60分 · Opera Houseから徒歩圏</div><span class="tag warn">営業状況を直前確認</span></div>
+    </article>
+
+    <article class="stop optional" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney')">
+      <div class="time">14:30</div><div class="badge">7A</div>
+      <div class="stopbody"><h3>Bondi Beach</h3><div class="meta">約2時間 · Circular Quay方面から333系統などで40〜50分程度を見込む</div><span class="tag optional">初日の残りが少ない場合</span></div>
+    </article>
+
+    <article class="stop optional">
+      <div class="time">13:45</div><div class="badge">7B</div>
+      <div class="stopbody"><h3>初日の残りを回収</h3><div class="meta">〜16:30 · MCA / 州立図書館 / St Mary's / QVB等、9/19で未消化になった場所を優先</div><span class="tag optional">残りが2か所以上ならこちら</span></div>
+    </article>
+
+    <article class="stop evening" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe')">
+      <div class="time">17:30</div><div class="badge">8</div>
+      <div class="stopbody"><h3>新Sydney Fish Market / 夕食</h3><div class="meta">17:30〜19:00目安 · 施設は7:00〜22:00、店舗ごとに営業時間が異なる</div><span class="tag evening">夜</span></div>
+    </article>
+  </div>
+
+  <div class="tips"><strong>遅延時の削り順：</strong>① Sydney Parkを20分に短縮 → ② 大学を45分に短縮 → ③ Bondi滞在を90分に短縮。<strong>日本語ツアーのチェックイン時刻は削らない</strong>のが安全です。</div>
+</section>
+</main>
+
+<section class="section">
+  <h2>この順番にする理由</h2>
+  <p class="lead">元の希望順から、移動の折り返しと閉店時刻を減らすために一部だけ並べ替えています。</p>
+  <div class="card-grid">
+    <article class="card main">
+      <img class="photo" src="https://ak-d.tripcdn.com/images/1mi02224x9474l1ycBD9C.jpg?proc=source%2Ftrip" alt="bills breakfast" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Trip.com掲載画像</div>
+      <h3>bills → Bourke Street Bakeryを朝にまとめる</h3>
+      <p>bills Surry Hillsは7:00から。Bourke Street Bakery Surry Hillsも平日7:00から18:00で、両店は同じSurry Hills内です。</p>
+      <p class="focus"><strong>ポイント：</strong>ベーカリーをBondi後に回すと、東のBondiからSurry Hillsへ戻ってさらに西のFish Marketへ向かう折り返しになります。朝にテイクアウトしておく方が効率的です。</p>
+    </article>
+
+    <article class="card main">
+      <img class="photo" src="https://cdn.yournet.space/good-design.org/2021/Architecture/3965-Sydney%20Park%20Skate%20Park/02_SYDNEY%20PARK%20SKATE%20PARK_POINT%20DOT%20MEDIA_GROUPGSA.jpg" alt="Sydney Park Skate Park" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Good Design / GroupGSA</div>
+      <h3>Sydney Park Skate Park<span class="en">Alexandria / Sydney Park</span></h3>
+      <p>City of SydneyによるとSydney Parkのスケートパークは市内最大規模で、照明は21:00に消灯します。今回は朝の見学なので営業時間上の問題はありません。</p>
+      <span class="timebox">滞在目安 30分</span>
+    </article>
+
+    <article class="card main">
+      <img class="photo" src="https://media-cdn.sygictraveldata.com/media/800x600/612664395a40232133447d33247d3836343239363538" alt="University of Sydney Quadrangle" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Sygic Travel / Tripomatic</div>
+      <h3>シドニー大学<span class="en">University of Sydney</span></h3>
+      <p>今回は広いキャンパス全体を回るより、Main QuadrangleとGreat Hall周辺を中心にして約1時間。ここからオペラハウスまでは公共交通で30〜40分程度を見ておきます。</p>
+      <p class="focus"><strong>出発目安：</strong>10:35。12:00ツアーに対して、11:15頃の到着を狙うと写真・チェックイン時間を確保できます。</p>
+    </article>
+
+    <article class="card main">
+      <img class="photo" src="https://megaconstrucciones.net/images/edificios-civiles/foto/sydney-opera-house.jpg" alt="Sydney Opera House" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Megaconstrucciones掲載画像</div>
+      <h3>オペラハウス日本語ツアー<span class="en">Japanese Tour</span></h3>
+      <p>公式の所要時間は約30分。開始15分前までのチェックインが必要で、約200段の階段を使います。</p>
+      <p class="focus"><strong>推奨枠：</strong>12:00。11:00だとSydney Parkと大学がかなり慌ただしくなり、13:30以降だとBondiまたは初日の残りの時間を圧迫します。</p>
+      <span class="timebox">12:00〜12:30推奨</span>
+    </article>
+
+    <article class="card optional">
+      <img class="photo" src="https://images.trvl-media.com/place/6060961/d3d7cda0-2bf0-471c-bed9-3fc2266c2a26.jpg" alt="Bondi Beach" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Expedia掲載画像</div>
+      <h3>午後はBondiか初日の残りか</h3>
+      <p>Opera House / Circular QuayからBondi Beachまでは公共交通で約40〜50分。BondiからFish Marketまでも40〜60分程度必要なので、午後に大きな移動が2回発生します。</p>
+      <p class="focus"><strong>判断基準：</strong>9/19の未消化が0〜1か所ならBondi。2か所以上残ったらCBD側の回収を優先した方が、3日間全体では満足度が高くなります。</p>
+    </article>
+
+    <article class="card evening">
+      <img class="photo" src="https://offloadmedia.feverup.com/secretsydney.com/wp-content/uploads/2026/01/19123740/01_Aerial20-20SFM20Redevelopment-scaled-1.jpg" alt="New Sydney Fish Market" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-credit">画像: Secret Sydney掲載画像</div>
+      <h3>新Sydney Fish Market<span class="en">1 Bridge Road, Glebe</span></h3>
+      <p>新市場は2026年1月19日に開業し、施設全体は毎日7:00〜22:00。夕食利用が可能になっています。</p>
+      <p class="focus"><strong>注意：</strong>魚屋は16:00前後で閉まる店が多い一方、レストラン・クイックイーツには19:00〜22:00まで営業する店があります。「市場で魚を買う」より「市場内で夕食を食べる」前提にするとこの時間帯で成立します。</p>
+      <span class="timebox">夕食 17:30〜19:00</span>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>営業・予約の確認メモ</h2>
+  <div class="source-list">
+    <p><strong>bills Surry Hills：</strong>7:00〜22:00、朝食は12:00まで。<a href="https://www.bills.com.au/locations/surry-hills" target="_blank" rel="noopener">公式ページ ↗</a></p>
+    <p><strong>Bourke Street Bakery Surry Hills：</strong>月曜7:00〜18:00。<a href="https://www.bourkestreetbakery.com.au/location/surry-hills/" target="_blank" rel="noopener">公式ページ ↗</a></p>
+    <p><strong>Sydney Park Skate Park：</strong>City of Sydney案内ではスケートパークの照明は21:00消灯。<a href="https://www.cityofsydney.nsw.gov.au/parks/sydney-park" target="_blank" rel="noopener">公式ページ ↗</a></p>
+    <p><strong>Opera House日本語ツアー：</strong>毎日11:00 / 12:00 / 13:30 / 14:30 / 15:30発、空席・実施状況は予約画面で確認。<a href="https://www.sydneyoperahouse.com/tours/japanese-tour" target="_blank" rel="noopener">公式ページ ↗</a></p>
+    <p><strong>New Sydney Fish Market：</strong>施設7:00〜22:00、個別店舗は別営業時間。<a href="https://www.sydneyfishmarket.com.au/" target="_blank" rel="noopener">公式ページ ↗</a></p>
+    <p><strong>The Rocks Cafe：</strong>公式サイトは営業情報を掲載中ですが、直近の閉店報告と地図系リスティングが矛盾しているため、旅行直前に必ず再確認してください。</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>このHTMLについて：</strong>9/19のルートマップと同じ考え方で、ルート図・時刻表・スポット説明を1ファイルにまとめています。画像とGoogle Mapsリンクの表示にはネット接続が必要です。</p>
+</footer>
+
+<script>
+function openMap(url){window.open(url,"_blank","noopener");}
+</script>
+</body>
+</html>

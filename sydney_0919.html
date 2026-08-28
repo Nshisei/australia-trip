@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>9/19 Sydney Route Map - Offline</title>
+<style>
+:root {
+  --bg:#f5f7f8; --card:#fff; --ink:#18232d; --muted:#687681; --line:#dfe5e9;
+  --main:#0c6b58; --optional:#b16600; --evening:#7147a8; --blue:#1d5b93;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);
+font-family:Inter,"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,-apple-system,sans-serif;line-height:1.45}
+header{background:linear-gradient(135deg,#0b5e51,#184f82);color:#fff;padding:25px 18px}
+.head{max-width:1180px;margin:auto} h1{margin:3px 0 7px;font-size:clamp(1.7rem,4vw,2.8rem);line-height:1.12}
+header p{margin:0;opacity:.9;max-width:850px} .eyebrow{font-weight:800;font-size:.75rem;letter-spacing:.12em;opacity:.75}
+.notice{max-width:1180px;margin:14px auto 0;padding:0 14px}
+.notice>div{background:#eef7f4;border:1px solid #cfe5de;border-radius:12px;padding:11px 13px;font-size:.84rem;color:#31574d}
+.grid{max-width:1180px;margin:15px auto 36px;padding:0 14px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(330px,.8fr);gap:15px;align-items:start}
+.panel{background:white;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 9px 25px rgba(28,40,50,.06)}
+.panelhead{padding:15px 17px 11px;border-bottom:1px solid var(--line)} .panelhead h2{font-size:1.03rem;margin:0} .panelhead p{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+.mapwrap{position:relative;background:#eaf1f4;overflow:auto} svg{width:100%;height:auto;display:block;min-width:650px}
+.map-note{padding:11px 14px;border-top:1px solid var(--line);font-size:.79rem;color:var(--muted)}
+.route-links{padding:10px 12px;display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.btn{display:inline-block;text-decoration:none;border:1px solid #cfe0ee;background:#eef6fb;color:#20537f;border-radius:10px;padding:8px 10px;font-size:.78rem;font-weight:800}
+.btn.main{background:var(--main);color:#fff;border-color:var(--main)}
+.airport{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.94);border:1px solid #d8e1e6;border-radius:12px;padding:9px 11px;box-shadow:0 5px 16px rgba(0,0,0,.08);z-index:2;font-size:.77rem}
+.airport strong{display:block;color:var(--blue);font-size:.86rem} .airport span{color:var(--muted)}
+.legend{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.95);border:1px solid #d8e1e6;border-radius:11px;padding:8px 10px;font-size:.72rem}
+.legend div{display:flex;align-items:center;gap:6px;margin:3px 0} .dot{width:9px;height:9px;border-radius:50%}
+.timeline{padding:8px 11px 13px} .stop{display:grid;grid-template-columns:61px 30px 1fr;gap:8px;padding:9px 5px;border-radius:11px;cursor:pointer;position:relative}
+.stop:hover{background:#f6f9fa} .time{font-weight:850;font-size:.85rem;padding-top:4px;font-variant-numeric:tabular-nums}
+.badge{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.74rem;font-weight:900;background:var(--main);position:relative}
+.stop:not(:last-child) .badge:after{content:"";position:absolute;width:2px;height:29px;background:#d9e0e4;top:27px;left:12.5px}
+.stop.optional .badge{background:var(--optional)} .stop.evening .badge{background:var(--evening)}
+.stopbody h3{font-size:.9rem;line-height:1.3;margin:2px 0 3px} .meta{font-size:.75rem;color:var(--muted)} .tag{display:inline-block;margin-top:5px;padding:2px 7px;border-radius:999px;font-size:.67rem;background:#eef2f3;color:#59656d}
+.tag.optional{background:#fff0d8;color:#835000} .tag.evening{background:#f1e8fb;color:#603a8e}
+.tips{margin:0 12px 13px;background:#fff7e8;border:1px solid #eedcaf;border-radius:11px;padding:10px 11px;font-size:.78rem;color:#5f4d1e}
+.marker-group{cursor:pointer} .marker-group:hover circle{filter:brightness(1.15)} .marker-group:hover rect{stroke:#8ca3b3;stroke-width:1.5}
+svg .water{fill:#dbeff6} svg .park{fill:#e4f0df} svg .land{fill:#f8faf9} svg .road{stroke:#d6dde1;stroke-width:4;fill:none;stroke-linecap:round} svg .road2{stroke:#e4e9ec;stroke-width:2;fill:none}
+svg .route{fill:none;stroke:var(--main);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.82} svg .detour{fill:none;stroke:var(--optional);stroke-width:4;stroke-dasharray:8 8;opacity:.78}
+footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:1fr} .mapwrap{max-height:none}}
+@media(max-width:520px){header{padding:20px 14px} .grid{padding:0 8px} .notice{padding:0 8px} .panel{border-radius:14px}}
+
+.shop-section{max-width:1180px;margin:0 auto 28px;padding:0 14px}
+.shop-section h2{margin:0 0 5px;font-size:1.18rem}
+.shop-section>.lead{margin:0 0 12px;color:var(--muted);font-size:.84rem}
+.shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.shop-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:0 7px 20px rgba(28,40,50,.05)}
+.shop-card h3{margin:0 0 6px;font-size:.98rem;line-height:1.35}
+.shop-card .en{display:block;color:var(--muted);font-size:.77rem;font-weight:700;margin-top:2px}
+.shop-card p{margin:7px 0;font-size:.82rem}
+.shop-card .why{background:#f5f8fa;border-radius:10px;padding:8px 9px;color:#45535d}
+.shop-card .source{font-size:.72rem;color:var(--muted);margin-top:9px}
+.shop-card .source a{color:#2d5e8e}
+.shop-card.optional{border-left:4px solid var(--optional)}
+.shop-card.food{border-left:4px solid var(--main)}
+.shop-card.dessert{border-left:4px solid var(--evening)}
+@media(max-width:720px){.shop-grid{grid-template-columns:1fr}}
+
+
+.spot-section{max-width:1180px;margin:0 auto 28px;padding:0 14px}
+.spot-section h2{margin:0 0 5px;font-size:1.18rem}
+.spot-section>.lead{margin:0 0 12px;color:var(--muted);font-size:.84rem}
+.spot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.spot-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:0 7px 20px rgba(28,40,50,.05);border-left:4px solid #557d98}
+.spot-card h3{margin:0 0 7px;font-size:.98rem;line-height:1.35}
+.spot-card .en{display:block;color:var(--muted);font-size:.77rem;font-weight:700;margin-top:2px}
+.spot-card p{margin:7px 0;font-size:.82rem}
+.spot-card .focus{background:#f2f6f8;border-radius:10px;padding:8px 9px;color:#40525f}
+.spot-card .timebox{display:inline-block;margin-top:6px;font-size:.71rem;font-weight:800;border-radius:999px;padding:3px 8px;background:#edf3f6;color:#395869}
+.spot-card.optional{border-left-color:var(--optional)}
+.spot-card.priority{border-left-color:var(--main)}
+@media(max-width:720px){.spot-grid{grid-template-columns:1fr}}
+
+
+.spot-photo{width:100%;height:210px;object-fit:cover;border-radius:11px;margin:0 0 12px;display:block;background:#e8edf0}
+.shop-photo{width:100%;height:200px;object-fit:cover;border-radius:11px;margin:0 0 12px;display:block;background:#e8edf0}
+.photo-wrap{position:relative}
+.photo-credit{font-size:.66rem;color:var(--muted);margin:-7px 0 9px}
+.photo-fallback{display:none;height:180px;border-radius:11px;background:#eef2f4;color:#66737c;align-items:center;justify-content:center;text-align:center;padding:16px;margin-bottom:12px;font-size:.78rem}
+
+
+.full-route-btn{
+  flex-basis:100%;
+  justify-content:center;
+  text-align:center;
+  font-size:.84rem;
+  padding:10px 12px;
+  background:#0b5e51 !important;
+  border-color:#0b5e51 !important;
+}
+
+.daynav{background:#18232d;padding:0}
+.daynav-inner{max-width:1180px;margin:auto;display:flex;align-items:center;padding:0 14px}
+.daynav-days{display:flex;flex:1;justify-content:center;gap:4px;padding:8px 4px}
+.daynav-item{display:flex;flex-direction:column;align-items:center;padding:8px 18px;border-radius:10px;text-decoration:none;color:rgba(255,255,255,.6);transition:background .15s,color .15s;border:1px solid transparent}
+.daynav-item:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-item.active{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.2)}
+.daynav-date{font-size:.82rem;font-weight:800;letter-spacing:.03em}
+.daynav-label{font-size:.71rem;margin-top:1px;opacity:.85}
+.daynav-arrow{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.6);font-size:1.1rem;flex-shrink:0;transition:background .15s,color .15s}
+.daynav-arrow:hover{background:rgba(255,255,255,.1);color:#fff}
+.daynav-arrow.disabled{opacity:.22;pointer-events:none;cursor:default}
+@media(max-width:520px){.daynav-item{padding:7px 10px}.daynav-label{display:none}}
+
+</style>
+</head>
+<body>
+<nav class="daynav">
+  <div class="daynav-inner">
+    <span class="daynav-arrow disabled">&#8592;</span>
+    <div class="daynav-days">
+      <a class="daynav-item active" href="sydney_0919.html">
+        <span class="daynav-date">9/19 土</span>
+        <span class="daynav-label">シドニー</span>
+      </a>
+      <a class="daynav-item" href="sydney_0920.html">
+        <span class="daynav-date">9/20 日</span>
+        <span class="daynav-label">ブルーマウンテン</span>
+      </a>
+      <a class="daynav-item" href="sydney_0921.html">
+        <span class="daynav-date">9/21 月</span>
+        <span class="daynav-label">シドニー Day3</span>
+      </a>
+    </div>
+    <a class="daynav-arrow" href="sydney_0920.html">&#8594;</a>
+  </div>
+</nav>
+<header>
+  <div class="head">
+    <div class="eyebrow">SYDNEY · 19 SEP</div>
+    <h1>9/19(土) シドニー観光ルート</h1>
+    <p>外部地図ライブラリを使わない、単体HTML版です。ルート図・地点・旅程はオフラインでも表示されます。</p>
+  </div>
+</header>
+
+<div class="notice"><div>
+  <strong>この版はレンダリング優先です。</strong>
+  地図は各地点の緯度・経度をもとにした位置関係図です。道路単位の徒歩ナビは、各地点または下のGoogle Mapsボタンを押して確認してください。
+</div></div>
+
+
+<div class="notice" style="margin-top:0">
+  <div>
+    <strong>Notion埋め込み向け画像設定：</strong>
+    観光スポットはWikimedia Commonsの画像ファイル直リンク（upload.wikimedia.org）、
+    店舗画像の一部は外部サイトの直リンク制限を避けるため画像CDN経由で表示しています。
+  </div>
+</div>
+
+<main class="grid">
+<section class="panel">
+  <div class="panelhead">
+    <h2>ルート地図</h2>
+    <p>北が上。番号をクリックすると該当地点をGoogle Mapsで開きます。</p>
+  </div>
+  <div class="mapwrap">
+    <div class="airport"><strong>✈ 10:00 Sydney Airport</strong><span>入国・荷物受取 → AirportLink → The Rocks</span></div>
+    <svg viewBox="0 0 920 760" xmlns="http://www.w3.org/2000/svg" aria-label="Sydney route map">
+      <rect width="920" height="760" class="land"/>
+      <!-- Schematic harbour / coast areas for orientation -->
+      <path class="water" d="M560,0 C610,120 600,175 650,245 C700,312 820,325 920,315 L920,0 Z"/>
+      <path class="water" d="M830,285 C800,360 835,425 920,465 L920,285 Z"/>
+      <path class="park" d="M560,180 C625,225 675,300 625,390 C600,435 590,470 610,515 L735,500 C730,425 770,350 725,280 C690,225 630,185 560,180 Z"/>
+      <!-- Schematic major streets -->
+      <path class="road" d="M260,90 L280,690"/>
+      <path class="road" d="M390,85 L405,705"/>
+      <path class="road2" d="M125,315 L640,325"/>
+      <path class="road2" d="M120,445 L700,455"/>
+      <path class="road2" d="M105,560 L620,570"/>
+      <path class="road2" d="M85,645 L540,655"/>
+      <text x="288" y="128" font-size="10" fill="#9aa5ad" transform="rotate(88 288 128)">George St axis</text>
+      <text x="605" y="95" font-size="12" fill="#7093a4" font-weight="700">Sydney Harbour</text>
+      <text x="625" y="380" font-size="11" fill="#73936b" font-weight="700">Royal Botanic Garden</text>
+
+      <polyline class="route" points="319.1,200.4 372.0,99.0 354.2,189.4 380.5,205.0 791.0,196.5 503.2,327.9 510.2,418.9 308.2,429.9 294.0,457.0 274.1,567.7 125.9,663.5"/>
+      <polyline class="detour" points="380.5,205.0 310.3,283.3 791.0,196.5"/>
+
+      
+      <g class="marker-group" data-id="hotel" tabindex="0" role="link" aria-label="The Australian Heritage Hotel"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=The+Australian+Heritage+Hotel+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=The+Australian+Heritage+Hotel+Sydney')">
+        <circle cx="319.1" cy="200.4" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="319.1" y="204.6" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">1</text>
+        <rect x="328.1" y="168.4" rx="7" ry="7" width="191.4" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="334.1" y="185.4" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          The Australian Heritage Hotel
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="dawes" tabindex="0" role="link" aria-label="Dawes Point + Harbour Bridge"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Dawes+Point+%2B+Harbour+Bridge+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Dawes+Point+%2B+Harbour+Bridge+Sydney')">
+        <circle cx="372.0" cy="99.0" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="372.0" y="103.2" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">2</text>
+        <rect x="382.0" y="63.0" rx="7" ry="7" width="184.8" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="388.0" y="80.0" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Dawes Point + Harbour Bridge
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="nurses" tabindex="0" role="link" aria-label="Nurses Walk"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Nurses+Walk+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Nurses+Walk+Sydney')">
+        <circle cx="354.2" cy="189.4" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="354.2" y="193.6" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">3</text>
+        <rect x="178.2" y="193.4" rx="7" ry="7" width="105.0" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="184.2" y="210.4" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Nurses Walk
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="mca" tabindex="0" role="link" aria-label="Museum of Contemporary Art Australia"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Museum+of+Contemporary+Art+Australia+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Museum+of+Contemporary+Art+Australia+Sydney')">
+        <circle cx="380.5" cy="205.0" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="380.5" y="209.2" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">4</text>
+        <rect x="388.5" y="221.0" rx="7" ry="7" width="235.0" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="394.5" y="238.0" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Museum of Contemporary Art Austral
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="tnt" tabindex="0" role="link" aria-label="TNT Tobacco Station &amp; Convenience"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=TNT+Tobacco+Station+and+Convenience+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=TNT+Tobacco+Station+and+Convenience+Sydney')">
+        <circle cx="310.3" cy="283.3" r="15" fill="#b16600" stroke="white" stroke-width="4"/>
+        <text x="310.3" y="287.5" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">+</text>
+        <rect x="119.3" y="281.3" rx="7" ry="7" width="217.8" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="125.3" y="298.3" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          TNT Tobacco Station &amp; Convenience
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="mrs" tabindex="0" role="link" aria-label="Mrs Macquarie&#x27;s Chair"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Mrs+Macquaries+Chair+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Mrs+Macquaries+Chair+Sydney')">
+        <circle cx="791.0" cy="196.5" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="791.0" y="200.7" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">5</text>
+        <rect x="613.0" y="164.5" rx="7" ry="7" width="138.6" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="619.0" y="181.5" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Mrs Macquarie&#x27;s Chair
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="library" tabindex="0" role="link" aria-label="State Library of New South Wales"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=State+Library+of+New+South+Wales+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=State+Library+of+New+South+Wales+Sydney')">
+        <circle cx="503.2" cy="327.9" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="503.2" y="332.1" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">6</text>
+        <rect x="513.2" y="293.9" rx="7" ry="7" width="211.2" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="519.2" y="310.9" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          State Library of New South Wales
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="cathedral" tabindex="0" role="link" aria-label="St Mary&#x27;s Cathedral"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=St+Marys+Cathedral+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=St+Marys+Cathedral+Sydney')">
+        <circle cx="510.2" cy="418.9" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="510.2" y="423.1" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">7</text>
+        <rect x="520.2" y="429.9" rx="7" ry="7" width="125.4" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="526.2" y="446.9" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          St Mary&#x27;s Cathedral
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="qvb" tabindex="0" role="link" aria-label="Queen Victoria Building (QVB)"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+%28QVB%29+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+%28QVB%29+Sydney')">
+        <circle cx="308.2" cy="429.9" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="308.2" y="434.1" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">8</text>
+        <rect x="112.2" y="403.9" rx="7" ry="7" width="191.4" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="118.2" y="420.9" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Queen Victoria Building (QVB)
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="townhall" tabindex="0" role="link" aria-label="Sydney Town Hall"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Town+Hall+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Town+Hall+Sydney')">
+        <circle cx="294.0" cy="457.0" r="15" fill="#0c6b58" stroke="white" stroke-width="4"/>
+        <text x="294.0" y="461.2" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">9</text>
+        <rect x="303.0" y="471.0" rx="7" ry="7" width="105.6" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="309.0" y="488.0" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Sydney Town Hall
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="pie" tabindex="0" role="link" aria-label="Sydney Pie Cafe / Capitol Square"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Pie+Cafe+%2F+Capitol+Square+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Pie+Cafe+%2F+Capitol+Square+Sydney')">
+        <circle cx="274.1" cy="567.7" r="15" fill="#7147a8" stroke="white" stroke-width="4"/>
+        <text x="274.1" y="571.9" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">10</text>
+        <rect x="284.1" y="575.7" rx="7" ry="7" width="211.2" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="290.1" y="592.7" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Sydney Pie Cafe / Capitol Square
+        </text>
+      </g>
+    
+      <g class="marker-group" data-id="anita" tabindex="0" role="link" aria-label="Anita Gelato Central Park"
+         onclick="openMap('https://www.google.com/maps/search/?api=1&query=Anita+Gelato+Central+Park+Sydney')" onkeypress="if(event.key==='Enter')openMap('https://www.google.com/maps/search/?api=1&query=Anita+Gelato+Central+Park+Sydney')">
+        <circle cx="125.9" cy="663.5" r="15" fill="#7147a8" stroke="white" stroke-width="4"/>
+        <text x="125.9" y="667.7" text-anchor="middle" font-size="10.5" font-weight="800" fill="white">11</text>
+        <rect x="135.9" y="671.5" rx="7" ry="7" width="165.0" height="24"
+              fill="white" fill-opacity=".92" stroke="#d9e1e7"/>
+        <text x="141.9" y="688.5" text-anchor="start" font-size="11" font-weight="700" fill="#24313d">
+          Anita Gelato Central Park
+        </text>
+      </g>
+    
+
+      <!-- North arrow -->
+      <g transform="translate(850,95)">
+        <path d="M0,26 L10,0 L20,26 L10,20 Z" fill="#25323c"/>
+        <text x="10" y="-7" text-anchor="middle" font-size="13" font-weight="800" fill="#25323c">N</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <div><span class="dot" style="background:#0c6b58"></span>メインルート</div>
+      <div><span class="dot" style="background:#b16600"></span>任意の寄り道</div>
+      <div><span class="dot" style="background:#7147a8"></span>夕食・デザート</div>
+    </div>
+  </div>
+  <div class="map-note">※ 背景道路は位置関係を読みやすくするための概略図で、実際の道路形状を完全再現したものではありません。</div>
+  <div class="route-links">
+    <a class="btn main full-route-btn" target="_blank" rel="noopener"
+       href="https://www.google.com/maps/dir/The+Australian+Heritage+Hotel,+The+Rocks/Dawes+Point,+Sydney/Nurses+Walk,+The+Rocks/Museum+of+Contemporary+Art+Australia/TNT+Tobacco+Station+and+Convenience,+Sydney/Mrs+Macquarie%27s+Chair/State+Library+of+New+South+Wales/St+Mary%27s+Cathedral,+Sydney/Queen+Victoria+Building,+Sydney/Sydney+Town+Hall/Sydney+Pie+Cafe,+Capitol+Square/Anita+Gelato+Central+Park,+Sydney/">
+      🗺 全区間ルートをGoogle Mapsで表示 ↗
+    </a>
+
+    <a class="btn main" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=The+Australian+Heritage+Hotel,+The+Rocks&destination=Museum+of+Contemporary+Art+Australia&waypoints=Dawes+Point+Sydney%7CNurses+Walk+The+Rocks&travelmode=walking">The Rocks区間 ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Museum+of+Contemporary+Art+Australia&destination=Queen+Victoria+Building&waypoints=Mrs+Macquarie%27s+Chair%7CState+Library+of+New+South+Wales%7CSt+Mary%27s+Cathedral+Sydney&travelmode=walking">MCA → QVB ↗</a>
+    <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Queen+Victoria+Building&destination=Anita+Gelato+Central+Park&waypoints=Sydney+Town+Hall%7CCapitol+Square+Sydney&travelmode=walking">QVB → Anita ↗</a>
+  </div>
+
+  <div class="map-note">
+    <strong>全区間ルート：</strong>
+    Australian Heritage Hotel → Dawes Point → Nurses Walk → MCA → TNT Tobacco（任意）→
+    Mrs Macquarie's Chair → NSW州立図書館 → St Mary's Cathedral → QVB →
+    Sydney Town Hall → Sydney Pie Cafe → Anita Gelato Central Park の順で開きます。
+    TNT Tobaccoを省略する場合はGoogle Maps上で削除してください。
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panelhead">
+    <h2>当日の時刻表</h2>
+    <p>各行をクリックするとGoogle Mapsで地点を開きます。</p>
+  </div>
+  <div class="timeline">
+    <article class="stop">
+      <div class="time">10:00</div><div class="badge" style="background:#1d5b93">✈</div>
+      <div class="stopbody"><h3>シドニー空港 / Sydney Airport 到着</h3><div class="meta">入国審査・荷物受取 → AirportLinkで市内へ</div></div>
+    </article>
+    
+      <article class="stop main" id="card-hotel" onclick="openMap('https://www.google.com/maps/search/?api=1&query=The+Australian+Heritage+Hotel+Sydney')">
+        <div class="time">12:00</div>
+        <div class="badge">1</div>
+        <div class="stopbody">
+          <h3>オーストラリアン・ヘリテージ・ホテル / The Australian Heritage Hotel</h3>
+          <div class="meta">昼食 60分 · </div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-dawes" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Dawes+Point+%2B+Harbour+Bridge+Sydney')">
+        <div class="time">13:00</div>
+        <div class="badge">2</div>
+        <div class="stopbody">
+          <h3>ドーズ・ポイント＋シドニー・ハーバー・ブリッジ / Dawes Point + Sydney Harbour Bridge</h3>
+          <div class="meta">散策 20分 · 徒歩 約8分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-nurses" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Nurses+Walk+Sydney')">
+        <div class="time">13:20</div>
+        <div class="badge">3</div>
+        <div class="stopbody">
+          <h3>ナースズ・ウォーク / Nurses Walk</h3>
+          <div class="meta">散策 15分 · 徒歩 約8分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-mca" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Museum+of+Contemporary+Art+Australia+Sydney')">
+        <div class="time">13:35</div>
+        <div class="badge">4</div>
+        <div class="stopbody">
+          <h3>シドニー現代美術館（MCA） / Museum of Contemporary Art Australia</h3>
+          <div class="meta">鑑賞 約30〜50分（時間がなければ短縮） · 徒歩 約5分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop optional" id="card-tnt" onclick="openMap('https://www.google.com/maps/search/?api=1&query=TNT+Tobacco+Station+and+Convenience+Sydney')">
+        <div class="time">14:25</div>
+        <div class="badge">+</div>
+        <div class="stopbody">
+          <h3>TNT Tobacco Station &amp; Convenience</h3>
+          <div class="meta">5〜10分 · 任意の寄り道</div>
+          <span class="tag optional">任意</span>
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-mrs" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Mrs+Macquaries+Chair+Sydney')">
+        <div class="time">15:00</div>
+        <div class="badge">5</div>
+        <div class="stopbody">
+          <h3>Mrs Macquarie&#x27;s Chair</h3>
+          <div class="meta">眺望 20〜25分 · MCAから徒歩 約25〜30分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-library" onclick="openMap('https://www.google.com/maps/search/?api=1&query=State+Library+of+New+South+Wales+Sydney')">
+        <div class="time">15:40</div>
+        <div class="badge">6</div>
+        <div class="stopbody">
+          <h3>ニューサウスウェールズ州立図書館 / State Library of New South Wales</h3>
+          <div class="meta">見学 30〜35分 · 徒歩 約20分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-cathedral" onclick="openMap('https://www.google.com/maps/search/?api=1&query=St+Marys+Cathedral+Sydney')">
+        <div class="time">16:25</div>
+        <div class="badge">7</div>
+        <div class="stopbody">
+          <h3>St Mary&#x27;s Cathedral</h3>
+          <div class="meta">見学 20〜25分 · 徒歩 約7分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-qvb" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Queen+Victoria+Building+%28QVB%29+Sydney')">
+        <div class="time">17:05</div>
+        <div class="badge">8</div>
+        <div class="stopbody">
+          <h3>クイーン・ヴィクトリア・ビルディング（QVB） / Queen Victoria Building</h3>
+          <div class="meta">散策 35〜40分 · 徒歩 約12〜15分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop main" id="card-townhall" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Town+Hall+Sydney')">
+        <div class="time">17:45</div>
+        <div class="badge">9</div>
+        <div class="stopbody">
+          <h3>シドニー市役所 / Sydney Town Hall</h3>
+          <div class="meta">外観 10分 · 徒歩 約3分</div>
+          
+        </div>
+      </article>
+    
+      <article class="stop evening" id="card-pie" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Pie+Cafe+%2F+Capitol+Square+Sydney')">
+        <div class="time">18:10</div>
+        <div class="badge">10</div>
+        <div class="stopbody">
+          <h3>シドニー・パイ・カフェ（キャピトル・スクエア） / Sydney Pie Cafe (Capitol Square)</h3>
+          <div class="meta">夕食 30〜45分 · 徒歩 約10分</div>
+          <span class="tag evening">夜</span>
+        </div>
+      </article>
+    
+      <article class="stop evening" id="card-anita" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Anita+Gelato+Central+Park+Sydney')">
+        <div class="time">19:00</div>
+        <div class="badge">11</div>
+        <div class="stopbody">
+          <h3>アニタ・ジェラート セントラルパーク / Anita Gelato Central Park</h3>
+          <div class="meta">デザート · 徒歩 約12〜15分</div>
+          <span class="tag evening">夜</span>
+        </div>
+      </article>
+    
+  </div>
+  <div class="tips"><strong>遅延時：</strong>TNT Tobaccoを最初に省略 → MCAは30分程度まで短縮。QVBへの17時台前半到着を優先。</div>
+</section>
+</main>
+
+
+
+<section class="spot-section">
+  <h2>観光スポットの概要・見るポイント</h2>
+  <p class="lead">「到着したら何を見るか」が分かるように、各スポットの役割と見どころをまとめています。</p>
+
+  <div class="spot-grid">
+    <article class="spot-card">
+      <div class="photo-wrap"><img class="spot-photo" src="https://i0.wp.com/australia-life.net/wp-content/uploads/2022/07/partha-narasimhan-RPcD-Pg9CwA-unsplash.jpg" alt="Dawes Point + Sydney Harbour Bridge" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Dawes Point + Sydney Harbour Bridge</div></div>
+      <div class="photo-credit">画像: Australia Life（ご指定画像）</div>
+      <h3>ドーズ・ポイント＋シドニー・ハーバー・ブリッジ<span class="en">Dawes Point + Sydney Harbour Bridge</span></h3>
+      <p>Dawes PointはThe Rocks北端、Sydney Harbour Bridgeの南側のたもとにあるエリアです。橋そのものを「渡る」より、今回は橋の巨大さを下から眺め、港と一緒に写真を撮る場所として使います。</p>
+      <p class="focus"><strong>見るポイント：</strong>橋のアーチ全体、石造りの橋脚、Circular Quay側へ広がる港の景色。The Rocksらしい古い街並みとの対比も見どころです。</p>
+      <span class="timebox">滞在目安 20分</span>
+    </article>
+
+    <article class="spot-card">
+      <div class="photo-wrap"><img class="spot-photo" src="https://aqua-tourdesk.com/wp-content/uploads/2024/03/the-rocks-5-768x960.jpg" alt="Nurses Walk" loading="lazy" data-fallback="https://images.weserv.nl/?url=aqua-tourdesk.com/wp-content/uploads/2024/03/the-rocks-5-768x960.jpg&w=1200&output=jpg" onerror="if(!this.dataset.retry){this.dataset.retry='1';this.src='https://images.weserv.nl/?url=aqua-tourdesk.com/wp-content/uploads/2024/03/the-rocks-5-768x960.jpg&w=1200&output=jpg';}else{this.style.display='none';this.nextElementSibling.style.display='flex';}">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Nurses Walk</div></div>
+      <div class="photo-credit">画像: AQUA Tour Desk（ご指定画像）</div>
+      <h3>ナースズ・ウォーク<span class="en">Nurses Walk</span></h3>
+      <p>The Rocksの細い路地を歩く短い散策区間です。大通りとは雰囲気が変わり、歴史地区らしい石造・レンガ造の建物や小道を感じられます。</p>
+      <p class="focus"><strong>見るポイント：</strong>細い路地、古い建物の外壁、The Rocks特有の高低差。観光施設を見るというより「街そのもの」を楽しむ場所です。</p>
+      <span class="timebox">滞在目安 15分</span>
+    </article>
+
+    <article class="spot-card optional">
+      <div class="photo-wrap"><img class="spot-photo" src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlRzg32yXGvTl6X5u5B-NZz5crcTw7drTYeGCi7ZL4HlQxBhgOLrJTRwIn_VsUUW2PphC-_yxj-JgReBs6fDQxEqqOCy9_aUemu23DFIkfVrgJoYm0WPGlm6Z-FTm0CHdnxqhxo=s1360-w1360-h1020-rw" alt="Museum of Contemporary Art Australia" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Museum of Contemporary Art Australia</div></div>
+      <div class="photo-credit">画像: Wikimedia Commons</div>
+      <h3>シドニー現代美術館（MCA）<span class="en">Museum of Contemporary Art Australia</span></h3>
+      <p>Circular Quayに面するオーストラリアの現代美術館。現代美術・オーストラリアの作家やFirst Nationsの作品などを見るためのスポットです。</p>
+      <p class="focus"><strong>見るポイント：</strong>館内を全部見ることより、興味のある展示を絞って見る想定。Circular Quay側の立地も含めて楽しみます。<strong>時間が押している場合は30分程度まで短縮</strong>します。</p>
+      <span class="timebox">滞在目安 30〜50分・短縮候補</span>
+    </article>
+
+    <article class="spot-card priority">
+      <div class="photo-wrap"><img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Mrs_Macquarie's_Chair_2013.jpg/960px-Mrs_Macquarie's_Chair_2013.jpg" alt="Mrs Macquarie's Chair" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Mrs Macquarie's Chair</div></div>
+      <div class="photo-credit">画像: GetYourGuide / source image</div>
+      <h3>ミセス・マッコーリーズ・チェア<span class="en">Mrs Macquarie's Chair</span></h3>
+      <p>Royal Botanic Garden東側の岬にある、Mrs Macquarieに由来する有名なビューポイントです。ここでは「椅子そのもの」より、Sydney Harbourの眺望がメインです。</p>
+      <p class="focus"><strong>見るポイント：</strong>Sydney Opera HouseとSydney Harbour Bridgeを同じ方向に収められる定番構図。初日にシドニーらしい景色をまとめて見られる場所として優先度高めです。</p>
+      <span class="timebox">滞在目安 20〜25分</span>
+    </article>
+
+    <article class="spot-card">
+      <div class="photo-wrap"><img class="spot-photo" src="https://sydneytales.com/wp-content/uploads/2024/02/20240210_state_library_rewrite_06.jpg" alt="State Library of New South Wales" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>State Library of New South Wales</div></div>
+      <div class="photo-credit">画像: Sydney Tales（ご指定画像）</div>
+      <h3>ニューサウスウェールズ州立図書館<span class="en">State Library of New South Wales</span></h3>
+      <p>NSW州を代表する公共図書館。今回は本を探すことより、歴史的な館内空間と建築を見ることを目的に立ち寄ります。</p>
+      <p class="focus"><strong>見るポイント：</strong>Mitchell Library側のクラシックな閲覧空間、階段・吹き抜け、展示スペース。館内を広く回りすぎず、建物の雰囲気を味わう30分前後の見学にします。</p>
+      <span class="timebox">滞在目安 30〜35分</span>
+    </article>
+
+    <article class="spot-card priority">
+      <div class="photo-wrap"><img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/St_Mary's_Cathedral,_Sydney.jpg/960px-St_Mary's_Cathedral,_Sydney.jpg" alt="St Mary's Cathedral" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>St Mary's Cathedral</div></div>
+      <div class="photo-credit">画像: Wikimedia Commons</div>
+      <h3>セント・メアリー大聖堂<span class="en">St Mary's Cathedral</span></h3>
+      <p>19世紀後半から建設された、シドニーを代表するカトリック大聖堂。地元の砂岩を使ったゴシック・リバイバル様式で、外観だけでなく内部も見応えがあります。</p>
+      <p class="focus"><strong>見るポイント：</strong>高い尖塔、砂岩の外壁、内部の列柱とヴォールト、ステンドグラス。短時間でも「外観→正面から内部→ステンドグラス」の順に見ると満足度が高いです。</p>
+      <span class="timebox">滞在目安 20〜25分</span>
+    </article>
+
+    <article class="spot-card priority">
+      <div class="photo-wrap"><img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/(1)Queen_Victoria_Building_Sydney.jpg/960px-(1)Queen_Victoria_Building_Sydney.jpg" alt="Queen Victoria Building" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Queen Victoria Building</div></div>
+      <div class="photo-credit">画像: Wikimedia Commons</div>
+      <h3>クイーン・ヴィクトリア・ビルディング（QVB）<span class="en">Queen Victoria Building</span></h3>
+      <p>1898年開業の歴史的ショッピングアーケード。George McRaeが設計し、ロマネスク様式の装飾的な建築で知られます。買い物よりも建物そのものを見る目的で組み込んでいます。</p>
+      <p class="focus"><strong>見るポイント：</strong>中央の大きなドーム、吹き抜け、アーチ、手すりなどの内部装飾。上階から中央空間を見下ろすと、QVBらしい構造が分かりやすいです。</p>
+      <span class="timebox">滞在目安 35〜40分・閉館時間優先</span>
+    </article>
+
+    <article class="spot-card">
+      <div class="photo-wrap"><img class="spot-photo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Sydney_Town_Hall.jpg/960px-Sydney_Town_Hall.jpg" alt="Sydney Town Hall" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Sydney Town Hall</div></div>
+      <div class="photo-credit">画像: Wikimedia Commons</div>
+      <h3>シドニー市役所<span class="en">Sydney Town Hall</span></h3>
+      <p>George Street沿いにある19世紀の市庁舎。現在も市政・イベントに使われるランドマークで、地元Sydney sandstoneによる大規模な外観が特徴です。</p>
+      <p class="focus"><strong>見るポイント：</strong>正面ファサード、細かな砂岩彫刻、時計塔。今回は館内見学を目的にせず、QVBから夕食へ向かう途中で外観を10分程度見る想定です。</p>
+      <span class="timebox">滞在目安 10分・外観中心</span>
+    </article>
+  </div>
+</section>
+
+<section class="shop-section">
+  <h2>店舗・飲食店の概要</h2>
+  <p class="lead">当日のルート上で立ち寄る店舗について、「どんな店か」と「この日に入れる理由」をまとめています。</p>
+
+  <div class="shop-grid">
+<article class="shop-card food">
+      <div class="photo-wrap"><img class="shop-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRraEiXbuJie3IJUKup0Oh6KvWRIZWa6n26YB6ZHusKYw&s=10" alt="The Australian Heritage Hotel" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>The Australian Heritage Hotel</div></div>
+      <div class="photo-credit">画像: ご指定の画像</div>
+      <h3>オーストラリアン・ヘリテージ・ホテル<span class="en">The Australian Heritage Hotel</span></h3>
+      <p>The Rocksにある歴史あるパブ。定番のパブ料理に加え、カンガルーとエミューを使った名物ピザ「Coat of Arms Pizza」があります。</p>
+      <p><strong>この日の予定：</strong>ここでは<strong>Coat of Arms Pizzaを食べる予定</strong>です。公式メニューでは、半分がエミュー、半分がペッパー・カンガルーで、ローストトマト、チャードペッパー、レモンマートル・マヨを合わせたピザとして掲載されています。</p>
+      <p><strong>この日に入れる理由：</strong>空港からThe Rocksへ移動した後の昼食地点で、ここからDawes Point、Nurses Walk、MCAへ徒歩で自然につなげられます。</p>
+      <p class="why"><strong>目的：</strong>初日の昼食で「オーストラリアらしいものを食べる」こと。Coat of Arms Pizzaをこの日の食事の主目的として扱います。</p>
+      <p class="source">公式情報：Australian Heritage Hotel 公式メニュー・Aboutページ</p>
+    </article>
+<article class="shop-card optional">
+      <div class="photo-wrap"><img class="shop-photo" src="https://images.weserv.nl/?url=cre.domainstatic.com.au/2019848506_1_1_250309_084125-w1697-h1200&w=1200&output=jpg" alt="TNT Tobacco Station &amp; Convenience" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>TNT Tobacco Station &amp; Convenience</div></div>
+      <div class="photo-credit">画像: CommercialRealEstate.com.au（画像CDN経由）</div>
+      <h3>TNTタバコ・ステーション＆コンビニエンス<span class="en">TNT Tobacco Station &amp; Convenience</span></h3>
+      <p>George Street周辺のタバコ・コンビニエンス系店舗。観光施設というより、短時間の立ち寄りを前提にしたスポットです。</p>
+      <p><strong>この日の使い方：</strong>MCAからCBD方向へ向かう途中の任意立ち寄り。観光時間が押している場合は、ここを最初に省略する想定です。</p>
+      <p class="why"><strong>優先度：</strong>低め。5〜10分で済ませ、QVBや州立図書館の時間を圧迫しないことを優先。</p>
+      <p class="source">※ 店舗の詳細情報は公開情報が限られるため、概要は店舗カテゴリと所在地情報に基づいています。</p>
+    </article>
+<article class="shop-card food">
+      <div class="photo-wrap"><img class="shop-photo" src="https://images.weserv.nl/?url=www.capitolsquare.com.au/images/sydney%20pie%20caf%C3%A9%20%281%20of%201%29.jpg%3Fcrc%3D3822265489&w=1200&output=jpg" alt="Sydney Pie Cafe" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Sydney Pie Cafe</div></div>
+      <div class="photo-credit">画像: Capitol Square公式（画像CDN経由）</div>
+      <h3>シドニー・パイ・カフェ（キャピトル・スクエア）<span class="en">Sydney Pie Cafe (Capitol Square)</span></h3>
+      <p>シドニーらしいミートパイ系の軽食を夕食候補として組み込んだ店舗です。Town HallからHaymarket方面へ南下する動線上に置いているため、観光後に寄りやすい構成です。</p>
+      <p><strong>この日の使い方：</strong>QVB・Sydney Town Hallを見終えたあと、Central Park方面へ向かう途中の夕食地点。</p>
+      <p class="why"><strong>狙い：</strong>重いディナーよりも短時間で食べられる夕食にして、最後のAnita Gelatoまで無理なくつなげること。</p>
+      <p class="source">※ 当日の営業状況・商品構成はGoogle Maps等で直前確認を推奨します。</p>
+    </article>
+<article class="shop-card dessert">
+      <div class="photo-wrap"><img class="shop-photo" src="https://images.weserv.nl/?url=www.anita-gelato.com/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-29-at-09.54.37.jpeg&w=1200&output=jpg" alt="Anita Gelato Central Park" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="photo-fallback">画像を読み込めませんでした<br>Anita Gelato Central Park</div></div>
+      <div class="photo-credit">画像: Anita Gelato official</div>
+      <h3>アニタ・ジェラート セントラルパーク<span class="en">Anita Gelato Central Park</span></h3>
+      <p>ChippendaleのCentral Parkにあるジェラート店。公式には150種類以上のローテーションフレーバーを扱い、ジェラート、ソルベ、フローズンヨーグルトなどを提供しています。</p>
+      <p><strong>この日の使い方：</strong>夕食後のデザート兼、9/19の最終目的地。夜まで営業しているため、昼間の観光時間を圧迫しにくいのがメリットです。</p>
+      <p class="why"><strong>特徴：</strong>ピスタチオ系、チョコレート系、フルーツ系など選択肢が多く、Central Park散策とセットにしやすい。</p>
+      <p class="source">公式情報：Anita Gelato Central Park 公式店舗ページ</p>
+    </article>
+</div>
+</section>
+
+<footer>
+  <p><strong>表示について：</strong>このHTMLはCSS・JavaScript・地図図形をすべてファイル内に保持しているため、外部CDNは使いません。Google Mapsへの遷移時のみネット接続が必要です。</p>
+</footer>
+
+<script>
+function openMap(url) {
+  window.open(url, "_blank", "noopener");
+}
+</script>
+</body>
+</html>
