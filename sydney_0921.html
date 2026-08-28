@@ -64,7 +64,7 @@ svg .evening-route{fill:none;stroke:var(--evening);stroke-width:5;stroke-linecap
 .section{max-width:1180px;margin:0 auto 28px;padding:0 14px}
 .section h2{margin:0 0 5px;font-size:1.18rem}
 .section>.lead{margin:0 0 12px;color:var(--muted);font-size:.84rem}
-.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:0 7px 20px rgba(28,40,50,.05);border-left:4px solid #557d98}
 .card.main{border-left-color:var(--main)}
 .card.optional{border-left-color:var(--optional)}
@@ -75,34 +75,35 @@ svg .evening-route{fill:none;stroke:var(--evening);stroke-width:5;stroke-linecap
 .card p{margin:7px 0;font-size:.82rem}
 .card .focus{background:#f2f6f8;border-radius:10px;padding:8px 9px;color:#40525f}
 .card .timebox{display:inline-block;margin-top:6px;font-size:.71rem;font-weight:800;border-radius:999px;padding:3px 8px;background:#edf3f6;color:#395869}
-.photo{width:100%;height:205px;object-fit:cover;border-radius:11px;margin:0 0 12px;display:block;background:#e8edf0}
+.photo-wrap{position:relative;margin:0 0 10px}
+.card-photo{width:100%;height:205px;object-fit:cover;border-radius:11px;display:block;background:#e8edf0}
+.photo-fallback{display:none;height:180px;border-radius:11px;background:#eef2f4;color:#66737c;align-items:center;justify-content:center;text-align:center;padding:16px;margin-bottom:10px;font-size:.78rem}
 .photo-credit{font-size:.66rem;color:var(--muted);margin:-7px 0 9px}
 .source-list{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px 16px;font-size:.78rem}
 .source-list a{color:#245a89}
 footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color:var(--muted)}
 @media(max-width:850px){.grid{grid-template-columns:1fr}.mapwrap{max-height:none}}
-@media(max-width:720px){.card-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.cards{grid-template-columns:1fr}}
 @media(max-width:520px){header{padding:20px 14px}.grid{padding:0 8px}.notice{padding:0 8px}.panel{border-radius:14px}}
-.stop{cursor:default!important;padding:9px 5px}
-.stop-main{display:grid;grid-template-columns:61px 30px minmax(0,1fr) 34px;gap:8px;align-items:start;width:100%}
-.stop-main .time{grid-column:1}
-.stop-main .badge{grid-column:2}
-.stop-main .stopbody{grid-column:3}
-.expand-btn{grid-column:4;width:30px;height:30px;border-radius:50%;border:1px solid #cad5dc;background:#fff;color:#304653;font-size:1.15rem;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s ease}
-.expand-btn:hover{background:#eef4f6}
-.expand-btn[aria-expanded="true"]{transform:rotate(45deg);background:#eaf5f1;border-color:#9dcabb;color:#0c6b58}
-.stop-detail{display:none;grid-column:1/-1;margin:8px 4px 4px 99px;padding:12px 13px;border:1px solid #dfe6ea;background:#f8fafb;border-radius:12px}
-.stop-detail.open{display:block}
-.stop-detail h4{margin:0 0 6px;font-size:.86rem}
-.stop-detail p{margin:5px 0;font-size:.79rem;color:#46545e}
-.detail-list{margin:7px 0 9px 1.05rem;padding:0;font-size:.78rem;color:#46545e}
-.detail-list li{margin:3px 0}
-.gmap-frame{width:100%;height:220px;border:0;border-radius:10px;margin-top:9px;background:#e8eef1}
-.gmap-link{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:7px 9px;border-radius:9px;background:#eef5ff;border:1px solid #cfdded;color:#23558b;text-decoration:none;font-size:.76rem;font-weight:800}
-.gmap-url{display:block;margin-top:7px;padding:7px 8px;border-radius:8px;background:#fff;border:1px solid #e0e6ea;color:#64717b;font-size:.68rem;word-break:break-all}
-.detail-note{margin-top:8px!important;padding:8px 9px;border-radius:9px;background:#fff7e8;border:1px solid #eedcaf;color:#5f4d1e!important}
+.card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:2px}
+.card-title-row h3{margin:0;flex:1}
+.detail-toggle{flex:0 0 36px;width:36px;height:36px;border-radius:50%;border:1px solid #cfd9df;background:#f7fafb;color:#284a5f;font-size:1.45rem;font-weight:500;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+.detail-toggle:hover{background:#edf4f7;border-color:#aac0cc}
+.detail-toggle:focus-visible{outline:3px solid rgba(29,91,147,.25);outline-offset:2px}
+.detail-toggle[aria-expanded="true"]{transform:rotate(45deg);background:#eaf3f0;border-color:#9bc5b8;color:#0c6b58}
+.card-details{display:none;padding-top:4px}
+.card-details.open{display:block;animation:detailOpen .18s ease-out}
+@keyframes detailOpen{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.card-details p{margin:6px 0;font-size:.82rem}
+.map-embed-box{margin-top:12px;border:1px solid #dce5ea;border-radius:12px;overflow:hidden;background:#f8fafb}
+.map-embed-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;background:#eef5f8;border-bottom:1px solid #dce5ea;font-size:.75rem;font-weight:850;color:#34586d}
+.map-embed-head a{color:#1d5b93;text-decoration:none;white-space:nowrap}
+.map-embed-head a:hover{text-decoration:underline}
+.map-frame{width:100%;height:230px;border:0;display:block;background:#edf1f3}
+.map-url{padding:8px 10px;border-top:1px solid #dce5ea;font-size:.67rem;line-height:1.35;color:#687681;overflow-wrap:anywhere;word-break:break-all;background:#fff}
+.map-url strong{color:#485b67}
+@media(max-width:520px){.map-frame{height:210px}.detail-toggle{width:34px;height:34px;flex-basis:34px}}
 .en-name{display:block;color:#687681;font-size:.74rem;margin-top:2px}
-@media(max-width:520px){.stop-main{grid-template-columns:55px 28px minmax(0,1fr) 32px;gap:6px}.stop-detail{margin-left:0}.gmap-frame{height:190px}}
 .daynav{background:#18232d;padding:0}
 .daynav-inner{max-width:1180px;margin:auto;display:flex;align-items:center;padding:0 14px}
 .daynav-days{display:flex;flex:1;justify-content:center;gap:4px;padding:8px 4px}
@@ -142,7 +143,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 <div class="head">
   <div class="eyebrow">SYDNEY · MON 21 SEP 2026 · DAY 3</div>
   <h1>9/21(月) シドニー観光ルート</h1>
-  <p>各スポット右端の「＋」を押すと詳細情報とGoogle Mapsを表示します。bills → Sydney Park → 大学 → オペラハウスツアー → 昼食 → Bondi or 初日残り → Fish Market。</p>
+  <p>タイムラインの各行をクリックするとGoogle Mapsが開きます。bills → Sydney Park → 大学 → オペラハウスツアー → 昼食 → Bondi or 初日残り → Fish Market。下段のスポット・店舗カードは「＋」で地図を展開できます。</p>
 </div>
 </header>
 
@@ -286,276 +287,99 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 
   <div class="timeline">
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">07:00</div>
-    <div class="badge">1</div>
-    <div class="stopbody">
-      <h3>bills Surry Hills / 朝食<span class="en-name">bills Surry Hills</span></h3>
-      <div class="meta">45〜50分 · 7:00開店</div>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-bills" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-bills">
-      <h4>概要</h4>
-      <p>Surry Hillsの人気カフェ。リコッタホットケーキ・スクランブルエッグが定番で、朝食からランチまで提供しています。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>リコッタホットケーキ（看板メニュー）</li>
-        <li>スクランブルエッグ系</li>
-        <li>平日月曜 7:00〜22:00、朝食は12:00まで</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>人気店のため、混雑時は待ちが出ることがあります。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=bills+Surry+Hills+Sydney&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="bills Surry Hills Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney')">
+  <div class="time">07:00</div>
+  <div class="badge">1</div>
+  <div class="stopbody">
+    <h3>bills Surry Hills / 朝食<span class="en-name">bills Surry Hills</span></h3>
+    <div class="meta">45〜50分 · 7:00開店</div>
   </div>
 </article>
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">07:55</div>
-    <div class="badge">2</div>
-    <div class="stopbody">
-      <h3>Bourke Street Bakery<span class="en-name">Bourke Street Bakery Surry Hills</span></h3>
-      <div class="meta">15分 · テイクアウト推奨</div>
-      <span class="tag">テイクアウト推奨</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-bourke" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-bourke">
-      <h4>概要</h4>
-      <p>billsから徒歩約10分のベーカリー。ソーセージロール・パイ・クロワッサン系が代表的。朝にテイクアウトしておくことで、午後の動線を節約します。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>ソーセージロール・パイ類</li>
-        <li>月曜 7:00〜18:00</li>
-        <li>billsから徒歩約10分</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>午後に戻るとBondi→Surry Hills→Fish Marketと折り返しが増えるため、朝に立ち寄る方が効率的です。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Bourke+Street+Bakery+Surry+Hills+Sydney&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Bourke Street Bakery Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills+Sydney" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills+Sydney</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills+Sydney')">
+  <div class="time">07:55</div>
+  <div class="badge">2</div>
+  <div class="stopbody">
+    <h3>Bourke Street Bakery<span class="en-name">Bourke Street Bakery Surry Hills</span></h3>
+    <div class="meta">15分 · テイクアウト推奨</div>
+    <span class="tag">テイクアウト推奨</span>
   </div>
 </article>
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">08:40</div>
-    <div class="badge">3</div>
-    <div class="stopbody">
-      <h3>Sydney Park Skate Park<span class="en-name">Sydney Park, Alexandria</span></h3>
-      <div class="meta">30分 · 7:00〜21:00</div>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-sydpark" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-sydpark">
-      <h4>概要</h4>
-      <p>Alexandriaにある大型公園内のスケートパーク。見学中心で30分程度を想定しています。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>市内最大規模のスケートパーク（City of Sydney情報）</li>
-        <li>照明 21:00消灯</li>
-        <li>朝の見学なので営業制限なし</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>遅延時は20分に短縮できます。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Sydney+Park+Skate+Park+Alexandria&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Sydney Park Skate Park Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria')">
+  <div class="time">08:40</div>
+  <div class="badge">3</div>
+  <div class="stopbody">
+    <h3>Sydney Park Skate Park<span class="en-name">Sydney Park, Alexandria</span></h3>
+    <div class="meta">30分 · 7:00〜21:00</div>
   </div>
 </article>
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">09:35</div>
-    <div class="badge">4</div>
-    <div class="stopbody">
-      <h3>シドニー大学<span class="en-name">University of Sydney</span></h3>
-      <div class="meta">約60分 · Quadrangle中心</div>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-usyd" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-usyd">
-      <h4>概要</h4>
-      <p>Main QuadrangleとGreat Hall周辺を中心に約1時間。広いキャンパスを全部回るより、建築を楽しむエリアを絞ります。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>Main Quadrangle（ゴシック様式の回廊）</li>
-        <li>Great Hall（内部公開日・時間は変動あり）</li>
-        <li>10:35頃出発 → 11:15オペラハウス着が目標</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>遅延時は45分に短縮。大学→オペラハウスの公共交通は約30〜40分を見込む。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=University+of+Sydney+Quadrangle&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="University of Sydney Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle')">
+  <div class="time">09:35</div>
+  <div class="badge">4</div>
+  <div class="stopbody">
+    <h3>シドニー大学<span class="en-name">University of Sydney</span></h3>
+    <div class="meta">約60分 · Quadrangle中心</div>
   </div>
 </article>
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">11:15</div>
-    <div class="badge" style="background:#1d5b93">5</div>
-    <div class="stopbody">
-      <h3>シドニー・オペラハウス到着<span class="en-name">Sydney Opera House</span></h3>
-      <div class="meta">外観・写真 → 11:45までにチェックイン</div>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-opera-arrive" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-opera-arrive">
-      <h4>概要</h4>
-      <p>12:00日本語ツアー前の外観見学とチェックイン準備。Welcome Centreで遅くとも11:45までにチェックインします。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>Circular Quay側からの帆の形状・外観</li>
-        <li>Sydney Harbour Bridgeと一緒に撮れる定番スポット</li>
-        <li>12:00ツアー：開始15分前までにWelcome Centreへ</li>
-      </ul>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Sydney+Opera+House&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Sydney Opera House Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+  <div class="time">11:15</div>
+  <div class="badge" style="background:#1d5b93">5</div>
+  <div class="stopbody">
+    <h3>シドニー・オペラハウス到着<span class="en-name">Sydney Opera House</span></h3>
+    <div class="meta">外観・写真 → 11:45までにチェックイン</div>
   </div>
 </article>
 
-<article class="stop main">
-  <div class="stop-main">
-    <div class="time">12:00</div>
-    <div class="badge" style="background:#1d5b93">▶</div>
-    <div class="stopbody">
-      <h3>日本語ツアー<span class="en-name">Japanese Guided Tour</span></h3>
-      <div class="meta">約30分 · 要事前予約</div>
-      <span class="tag">要事前予約</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-opera-tour" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-opera-tour">
-      <h4>概要</h4>
-      <p>公式ガイドによる日本語ツアー。所要約30分で、内部のステージ・ホワイエ・建築の解説を日本語で聞けます。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>毎日 11:00 / 12:00 / 13:30 / 14:30 / 15:30発（空席・実施状況は変動）</li>
-        <li>最大約1.5km・約200段の階段</li>
-        <li>開始15分前チェックイン必須</li>
-        <li>事前予約推奨（公式サイト: sydneyoperahouse.com/tours/japanese-tour）</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>12:00枠が最も余裕のある構成です。ツアーのチェックイン時刻は削らないでください。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Sydney+Opera+House&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Sydney Opera House Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House</span>
-    </div>
+<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+  <div class="time">12:00</div>
+  <div class="badge" style="background:#1d5b93">▶</div>
+  <div class="stopbody">
+    <h3>日本語ツアー<span class="en-name">Japanese Guided Tour</span></h3>
+    <div class="meta">約30分 · 要事前予約</div>
+    <span class="tag">要事前予約</span>
   </div>
 </article>
 
-<article class="stop warn">
-  <div class="stop-main">
-    <div class="time">12:45</div>
-    <div class="badge">6</div>
-    <div class="stopbody">
-      <h3>The Rocks Cafe / 昼食<span class="en-name">The Rocks Cafe</span></h3>
-      <div class="meta">約60分 · Opera Houseから徒歩圏</div>
-      <span class="tag warn">営業状況を直前確認</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-rocks-cafe" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-rocks-cafe">
-      <h4>概要</h4>
-      <p>Opera Houseから徒歩圏のThe Rocksエリアのカフェ。直前の旅行者報告と地図リスティングで営業情報が矛盾しているため、当日直前確認が必須です。</p>
-      <h4>代替ランチ候補（閉まっていた場合）</h4>
-      <ul class="detail-list">
-        <li>Circular Quay / The Rocks周辺の別カフェ・レストラン</li>
-        <li>Opera Bar（Opera House内・要予約）</li>
-        <li>Quay方面のフードコート</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>The Rocks周辺は選択肢が多いため、閉まっていても現地判断で対応できます。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=The+Rocks+Sydney+NSW&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="The Rocks Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=The+Rocks+Cafe+Sydney" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=The+Rocks+Cafe+Sydney</span>
-    </div>
+<article class="stop warn" onclick="openMap('https://www.google.com/maps/search/?api=1&query=The+Rocks+Cafe+Sydney')">
+  <div class="time">12:45</div>
+  <div class="badge">6</div>
+  <div class="stopbody">
+    <h3>The Rocks Cafe / 昼食<span class="en-name">The Rocks Cafe</span></h3>
+    <div class="meta">約60分 · Opera Houseから徒歩圏</div>
+    <span class="tag warn">営業状況を直前確認</span>
+  </div>
+</article>
+
+<article class="stop optional" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney')">
+  <div class="time">14:30</div>
+  <div class="badge">7A</div>
+  <div class="stopbody">
+    <h3>Bondi Beach<span class="en-name">Bondi Beach, Sydney</span></h3>
+    <div class="meta">約2時間 · 電車+バスで約40〜50分</div>
+    <span class="tag optional">初日の残りが少ない場合</span>
   </div>
 </article>
 
 <article class="stop optional">
-  <div class="stop-main">
-    <div class="time">14:30</div>
-    <div class="badge">7A</div>
-    <div class="stopbody">
-      <h3>Bondi Beach<span class="en-name">Bondi Beach, Sydney</span></h3>
-      <div class="meta">約2時間 · 電車+バスで約40〜50分</div>
-      <span class="tag optional">初日の残りが少ない場合</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-bondi" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-bondi">
-      <h4>概要</h4>
-      <p>シドニーを代表するビーチ。Circular QuayからBondi Junctionまで電車、その後バスで約40〜50分程度。BondiからFish Marketまでも40〜60分かかります。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>白い砂浜・澄んだ海</li>
-        <li>Bondi Icebergs（屋外プール）の眺め</li>
-        <li>Bondi → Bronte Coastal Walk（余裕があれば）</li>
-      </ul>
-      <p class="detail-note"><strong>判断基準：</strong>9/19の未消化が0〜1か所ならBondiへ。2か所以上残っているなら7Bを選択。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Bondi+Beach+Sydney&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Bondi Beach Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney</span>
-    </div>
+  <div class="time">13:45</div>
+  <div class="badge">7B</div>
+  <div class="stopbody">
+    <h3>初日の残りを回収<span class="en-name">9/19 leftover sights (CBD)</span></h3>
+    <div class="meta">〜16:30 · CBD周辺</div>
+    <span class="tag optional">残りが2か所以上ならこちら</span>
   </div>
 </article>
 
-<article class="stop optional">
-  <div class="stop-main">
-    <div class="time">13:45</div>
-    <div class="badge">7B</div>
-    <div class="stopbody">
-      <h3>初日の残りを回収<span class="en-name">9/19 leftover sights (CBD)</span></h3>
-      <div class="meta">〜16:30 · CBD周辺</div>
-      <span class="tag optional">残りが2か所以上ならこちら</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-leftover" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-leftover">
-      <h4>概要</h4>
-      <p>9/19で時間が足りなかった場所をCBD内で回収するルート。Fish Market（西）への移動もBondiからより効率的です。</p>
-      <h4>優先順位の目安</h4>
-      <ul class="detail-list">
-        <li>MCA（現代美術館）← 未消化なら優先度高め</li>
-        <li>ニューサウスウェールズ州立図書館</li>
-        <li>St Mary's Cathedral</li>
-        <li>QVB（Queen Victoria Building）</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>7Aと7Bは択一です。9/19終了後の残り状況で判断してください。</p>
-    </div>
-  </div>
-</article>
-
-<article class="stop evening">
-  <div class="stop-main">
-    <div class="time">17:30</div>
-    <div class="badge">8</div>
-    <div class="stopbody">
-      <h3>新Sydney Fish Market / 夕食<span class="en-name">New Sydney Fish Market</span></h3>
-      <div class="meta">17:30〜19:00目安 · 1 Bridge Road, Glebe</div>
-      <span class="tag evening">夜</span>
-    </div>
-    <button class="expand-btn" type="button" aria-expanded="false" aria-controls="detail-fishmarket" onclick="toggleDetail(this)">＋</button>
-    <div class="stop-detail" id="detail-fishmarket">
-      <h4>概要</h4>
-      <p>2026年1月19日開業の新市場。施設全体は7:00〜22:00で、夕食利用が可能。魚屋は16:00前後に閉まる店が多いため、「市場内で夕食を食べる」スタンスで利用します。</p>
-      <h4>ポイント</h4>
-      <ul class="detail-list">
-        <li>レストラン・クイックイーツは19:00〜22:00まで営業する店あり</li>
-        <li>新しい施設でウォーターフロントの空間も楽しめる</li>
-        <li>BondiまたはCBDからは公共交通で40〜60分程度</li>
-      </ul>
-      <p class="detail-note"><strong>当日のメモ：</strong>Fish Market内の個別店舗の営業時間は変動するため、到着時に現地で確認してください。</p>
-      <h4 style="margin-top:12px">Google Maps</h4>
-      <iframe class="gmap-frame" src="https://www.google.com/maps?q=Sydney+Fish+Market+1+Bridge+Road+Glebe&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="New Sydney Fish Market Google Map"></iframe>
-      <a class="gmap-link" href="https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe" target="_blank" rel="noopener">Google Mapsで開く ↗</a>
-      <span class="gmap-url">https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe</span>
-    </div>
+<article class="stop evening" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe')">
+  <div class="time">17:30</div>
+  <div class="badge">8</div>
+  <div class="stopbody">
+    <h3>新Sydney Fish Market / 夕食<span class="en-name">New Sydney Fish Market</span></h3>
+    <div class="meta">17:30〜19:00目安 · 1 Bridge Road, Glebe</div>
+    <span class="tag evening">夜</span>
   </div>
 </article>
 
@@ -568,55 +392,137 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 <section class="section">
   <h2>この順番にする理由</h2>
   <p class="lead">元の希望順から、移動の折り返しと閉店時刻を減らすために一部だけ並べ替えています。</p>
-  <div class="card-grid">
+  <div class="cards">
     <article class="card main">
-      <img class="photo" src="https://ak-d.tripcdn.com/images/1mi02224x9474l1ycBD9C.jpg?proc=source%2Ftrip" alt="bills breakfast" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://ak-d.tripcdn.com/images/1mi02224x9474l1ycBD9C.jpg?proc=source%2Ftrip" alt="bills breakfast" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>bills breakfast</div>
+      </div>
       <div class="photo-credit">画像: Trip.com掲載画像</div>
-      <h3>bills → Bourke Street Bakeryを朝にまとめる</h3>
+      <div class="card-title-row">
+        <h3>bills → Bourke Street Bakeryを朝にまとめる</h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-1" title="詳細を表示">+</button>
+      </div>
       <p>bills Surry Hillsは7:00から。Bourke Street Bakery Surry Hillsも平日7:00から18:00で、両店は同じSurry Hills内です。</p>
       <p class="focus"><strong>ポイント：</strong>ベーカリーをBondi後に回すと、東のBondiからSurry Hillsへ戻ってさらに西のFish Marketへ向かう折り返しになります。朝にテイクアウトしておく方が効率的です。</p>
+      <span class="timebox">1・2 · 07:00〜08:10</span>
+      <div class="card-details" id="s21-1">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=bills+Surry+Hills+Sydney&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="bills Surry Hills Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney</a></div>
+        </div>
+      </div>
     </article>
 
     <article class="card main">
-      <img class="photo" src="https://cdn.yournet.space/good-design.org/2021/Architecture/3965-Sydney%20Park%20Skate%20Park/02_SYDNEY%20PARK%20SKATE%20PARK_POINT%20DOT%20MEDIA_GROUPGSA.jpg" alt="Sydney Park Skate Park" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://cdn.yournet.space/good-design.org/2021/Architecture/3965-Sydney%20Park%20Skate%20Park/02_SYDNEY%20PARK%20SKATE%20PARK_POINT%20DOT%20MEDIA_GROUPGSA.jpg" alt="Sydney Park Skate Park" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>Sydney Park Skate Park</div>
+      </div>
       <div class="photo-credit">画像: Good Design / GroupGSA</div>
-      <h3>Sydney Park Skate Park<span class="en">Alexandria / Sydney Park</span></h3>
+      <div class="card-title-row">
+        <h3>Sydney Park Skate Park<span class="en">Alexandria / Sydney Park</span></h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-2" title="詳細を表示">+</button>
+      </div>
       <p>City of SydneyによるとSydney Parkのスケートパークは市内最大規模で、照明は21:00に消灯します。今回は朝の見学なので営業時間上の問題はありません。</p>
-      <span class="timebox">滞在目安 30分</span>
+      <p class="focus"><strong>見るポイント：</strong>大規模スケートパークの構造と空間。ボウル、ランプ、平場エリアの配置を朝の静かな時間帯に見学します。</p>
+      <span class="timebox">3 · 08:40 · 滞在目安 30分</span>
+      <div class="card-details" id="s21-2">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=Sydney+Park+Skate+Park+Alexandria&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Sydney Park Skate Park Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria</a></div>
+        </div>
+      </div>
     </article>
 
     <article class="card main">
-      <img class="photo" src="https://media-cdn.sygictraveldata.com/media/800x600/612664395a40232133447d33247d3836343239363538" alt="University of Sydney Quadrangle" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://media-cdn.sygictraveldata.com/media/800x600/612664395a40232133447d33247d3836343239363538" alt="University of Sydney Quadrangle" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>University of Sydney Quadrangle</div>
+      </div>
       <div class="photo-credit">画像: Sygic Travel / Tripomatic</div>
-      <h3>シドニー大学<span class="en">University of Sydney</span></h3>
+      <div class="card-title-row">
+        <h3>シドニー大学<span class="en">University of Sydney</span></h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-3" title="詳細を表示">+</button>
+      </div>
       <p>今回は広いキャンパス全体を回るより、Main QuadrangleとGreat Hall周辺を中心にして約1時間。ここからオペラハウスまでは公共交通で30〜40分程度を見ておきます。</p>
       <p class="focus"><strong>出発目安：</strong>10:35。12:00ツアーに対して、11:15頃の到着を狙うと写真・チェックイン時間を確保できます。</p>
+      <span class="timebox">4 · 09:35 · 滞在目安 約60分</span>
+      <div class="card-details" id="s21-3">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=University+of+Sydney+Quadrangle&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="University of Sydney Quadrangle Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle</a></div>
+        </div>
+      </div>
     </article>
 
     <article class="card main">
-      <img class="photo" src="https://megaconstrucciones.net/images/edificios-civiles/foto/sydney-opera-house.jpg" alt="Sydney Opera House" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://megaconstrucciones.net/images/edificios-civiles/foto/sydney-opera-house.jpg" alt="Sydney Opera House" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>Sydney Opera House</div>
+      </div>
       <div class="photo-credit">画像: Megaconstrucciones掲載画像</div>
-      <h3>オペラハウス日本語ツアー<span class="en">Japanese Tour</span></h3>
+      <div class="card-title-row">
+        <h3>オペラハウス日本語ツアー<span class="en">Japanese Tour</span></h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-4" title="詳細を表示">+</button>
+      </div>
       <p>公式の所要時間は約30分。開始15分前までのチェックインが必要で、約200段の階段を使います。</p>
       <p class="focus"><strong>推奨枠：</strong>12:00。11:00だとSydney Parkと大学がかなり慌ただしくなり、13:30以降だとBondiまたは初日の残りの時間を圧迫します。</p>
-      <span class="timebox">12:00〜12:30推奨</span>
+      <span class="timebox">5・▶ · 11:15〜12:30 · 12:00推奨</span>
+      <div class="card-details" id="s21-4">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=Sydney+Opera+House&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Sydney Opera House Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House</a></div>
+        </div>
+      </div>
     </article>
 
     <article class="card optional">
-      <img class="photo" src="https://images.trvl-media.com/place/6060961/d3d7cda0-2bf0-471c-bed9-3fc2266c2a26.jpg" alt="Bondi Beach" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://images.trvl-media.com/place/6060961/d3d7cda0-2bf0-471c-bed9-3fc2266c2a26.jpg" alt="Bondi Beach" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>Bondi Beach</div>
+      </div>
       <div class="photo-credit">画像: Expedia掲載画像</div>
-      <h3>午後はBondiか初日の残りか</h3>
+      <div class="card-title-row">
+        <h3>午後はBondiか初日の残りか</h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-5" title="詳細を表示">+</button>
+      </div>
       <p>Opera House / Circular QuayからBondi Beachまでは公共交通で約40〜50分。BondiからFish Marketまでも40〜60分程度必要なので、午後に大きな移動が2回発生します。</p>
       <p class="focus"><strong>判断基準：</strong>9/19の未消化が0〜1か所ならBondi。2か所以上残ったらCBD側の回収を優先した方が、3日間全体では満足度が高くなります。</p>
+      <span class="timebox">7A / 7B · 13:45〜16:30</span>
+      <div class="card-details" id="s21-5">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=Bondi+Beach+Sydney&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="Bondi Beach Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney</a></div>
+        </div>
+      </div>
     </article>
 
     <article class="card evening">
-      <img class="photo" src="https://offloadmedia.feverup.com/secretsydney.com/wp-content/uploads/2026/01/19123740/01_Aerial20-20SFM20Redevelopment-scaled-1.jpg" alt="New Sydney Fish Market" loading="lazy" referrerpolicy="no-referrer">
+      <div class="photo-wrap">
+        <img class="card-photo" src="https://offloadmedia.feverup.com/secretsydney.com/wp-content/uploads/2026/01/19123740/01_Aerial20-20SFM20Redevelopment-scaled-1.jpg" alt="New Sydney Fish Market" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="photo-fallback">画像を読み込めませんでした<br>New Sydney Fish Market</div>
+      </div>
       <div class="photo-credit">画像: Secret Sydney掲載画像</div>
-      <h3>新Sydney Fish Market<span class="en">1 Bridge Road, Glebe</span></h3>
+      <div class="card-title-row">
+        <h3>新Sydney Fish Market<span class="en">1 Bridge Road, Glebe</span></h3>
+        <button class="detail-toggle" type="button" aria-expanded="false" aria-controls="s21-6" title="詳細を表示">+</button>
+      </div>
       <p>新市場は2026年1月19日に開業し、施設全体は毎日7:00〜22:00。夕食利用が可能になっています。</p>
       <p class="focus"><strong>注意：</strong>魚屋は16:00前後で閉まる店が多い一方、レストラン・クイックイーツには19:00〜22:00まで営業する店があります。「市場で魚を買う」より「市場内で夕食を食べる」前提にするとこの時間帯で成立します。</p>
-      <span class="timebox">夕食 17:30〜19:00</span>
+      <span class="timebox">8 · 17:30 · 夕食 17:30〜19:00</span>
+      <div class="card-details" id="s21-6">
+        <div class="map-embed-box">
+          <div class="map-embed-head"><span>📍 Google Maps</span><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe" target="_blank" rel="noopener">大きな地図で開く ↗</a></div>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=Sydney+Fish+Market+1+Bridge+Road+Glebe&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen title="New Sydney Fish Market Google Maps"></iframe>
+          <div class="map-url"><strong>Google Maps URL: </strong><a href="https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe" target="_blank" rel="noopener">https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe</a></div>
+        </div>
+      </div>
     </article>
   </div>
 </section>
@@ -639,11 +545,19 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 
 <script>
 function openMap(url){window.open(url,"_blank","noopener");}
-function toggleDetail(btn){
-  const detail=document.getElementById(btn.getAttribute("aria-controls"));
-  const isOpen=detail.classList.toggle("open");
-  btn.setAttribute("aria-expanded",isOpen?"true":"false");
-}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.detail-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = btn.getAttribute('aria-controls');
+      var details = document.getElementById(id);
+      if (!details) return;
+      var willOpen = !details.classList.contains('open');
+      details.classList.toggle('open', willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      btn.setAttribute('title', willOpen ? '詳細を閉じる' : '詳細を表示');
+    });
+  });
+});
 </script>
 </body>
 </html>
