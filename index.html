@@ -31,6 +31,13 @@ main{max-width:900px;margin:40px auto 60px;padding:0 18px}
 .day-cta{margin-top:16px;display:inline-block;background:var(--main);color:#fff;border-radius:10px;padding:9px 16px;font-size:.82rem;font-weight:800;text-align:center}
 footer{text-align:center;padding:0 18px 32px;font-size:.76rem;color:var(--muted)}
 @media(max-width:680px){.days{grid-template-columns:1fr}.day-date{font-size:1.4rem}}
+.flights{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 28px}
+.flt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 5px 16px rgba(28,40,50,.06)}
+.flt-icon{font-size:1.4rem;opacity:.65;flex-shrink:0}
+.flt-date{font-size:.73rem;font-weight:800;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.flt-time{font-size:1.15rem;font-weight:900;color:var(--ink);line-height:1.2}
+.flt-label{font-size:.78rem;color:var(--muted);margin-top:3px}
+@media(max-width:500px){.flights{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -44,6 +51,25 @@ footer{text-align:center;padding:0 18px 32px;font-size:.76rem;color:var(--muted)
 
 <main>
   <p class="intro">日付をクリックすると、その日のルートマップと旅程を確認できます。</p>
+
+  <div class="flights">
+    <div class="flt">
+      <div class="flt-icon">&#9992;</div>
+      <div>
+        <div class="flt-date">9/18 金曜日</div>
+        <div class="flt-time">22:00 出発</div>
+        <div class="flt-label">日本発 &#8594; シドニー</div>
+      </div>
+    </div>
+    <div class="flt">
+      <div class="flt-icon">&#9992;</div>
+      <div>
+        <div class="flt-date">9/22 火曜日</div>
+        <div class="flt-time">12:00 シドニー空港発</div>
+        <div class="flt-label">シドニー &#8594; 日本</div>
+      </div>
+    </div>
+  </div>
 
   <div class="days">
     <a class="day-card" href="sydney_0919.html">
