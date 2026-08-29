@@ -104,6 +104,15 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 .map-url strong{color:#485b67}
 @media(max-width:520px){.map-frame{height:210px}.detail-toggle{width:34px;height:34px;flex-basis:34px}}
 .en-name{display:block;color:#687681;font-size:.74rem;margin-top:2px}
+
+/* Timeline → detail card navigation */
+.stop[data-scroll-target]{transition:background .16s ease,transform .16s ease,box-shadow .16s ease}
+.stop[data-scroll-target]:hover{background:#eef5f7;transform:translateX(2px)}
+.stop[data-scroll-target]:focus-visible{outline:3px solid rgba(29,91,147,.25);outline-offset:2px;background:#eef5f7}
+.stop[data-scroll-target] .stopbody h3:after{content:"  ↘";font-size:.72rem;color:#7c8b95;font-weight:700}
+.card{scroll-margin-top:18px}
+.card.jump-highlight{animation:jumpHighlight 1.6s ease}
+@keyframes jumpHighlight{0%{box-shadow:0 0 0 0 rgba(12,107,88,0),0 7px 20px rgba(28,40,50,.05)}25%{box-shadow:0 0 0 4px rgba(12,107,88,.22),0 10px 28px rgba(28,40,50,.10)}100%{box-shadow:0 0 0 0 rgba(12,107,88,0),0 7px 20px rgba(28,40,50,.05)}}
 .daynav{background:#18232d;padding:0}
 .daynav-inner{max-width:1180px;margin:auto;display:flex;align-items:center;padding:0 14px}
 .daynav-days{display:flex;flex:1;justify-content:center;gap:4px;padding:8px 4px}
@@ -282,12 +291,12 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
 <section class="panel">
   <div class="panelhead">
     <h2>おすすめ時刻表</h2>
-    <p>12:00日本語ツアーを前提。公共交通は当日の遅延を見込み、5〜10分の余白を含めています。</p>
+    <p>12:00日本語ツアーを前提。公共交通は当日の遅延を見込み、5〜10分の余白を含めています。各行をクリックすると、下の詳細カードへ自動スクロールして詳細が開きます。</p>
   </div>
 
   <div class="timeline">
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=bills+Surry+Hills+Sydney')">
+<article class="stop main" data-scroll-target="s21-1" role="button" tabindex="0" aria-label="bills Surry Hillsの詳細カードへ移動">
   <div class="time">07:00</div>
   <div class="badge">1</div>
   <div class="stopbody">
@@ -296,7 +305,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bourke+Street+Bakery+Surry+Hills+Sydney')">
+<article class="stop main" data-scroll-target="s21-1" role="button" tabindex="0" aria-label="Bourke Street Bakeryの詳細カードへ移動">
   <div class="time">07:55</div>
   <div class="badge">2</div>
   <div class="stopbody">
@@ -306,7 +315,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Park+Skate+Park+Alexandria')">
+<article class="stop main" data-scroll-target="s21-2" role="button" tabindex="0" aria-label="Sydney Park Skate Parkの詳細カードへ移動">
   <div class="time">08:40</div>
   <div class="badge">3</div>
   <div class="stopbody">
@@ -315,7 +324,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=University+of+Sydney+Quadrangle')">
+<article class="stop main" data-scroll-target="s21-3" role="button" tabindex="0" aria-label="シドニー大学の詳細カードへ移動">
   <div class="time">09:35</div>
   <div class="badge">4</div>
   <div class="stopbody">
@@ -324,7 +333,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+<article class="stop main" data-scroll-target="s21-4" role="button" tabindex="0" aria-label="オペラハウスの詳細カードへ移動">
   <div class="time">11:15</div>
   <div class="badge" style="background:#1d5b93">5</div>
   <div class="stopbody">
@@ -333,7 +342,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop main" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Opera+House')">
+<article class="stop main" data-scroll-target="s21-4" role="button" tabindex="0" aria-label="日本語ツアーの詳細カードへ移動">
   <div class="time">12:00</div>
   <div class="badge" style="background:#1d5b93">▶</div>
   <div class="stopbody">
@@ -353,7 +362,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop optional" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Bondi+Beach+Sydney')">
+<article class="stop optional" data-scroll-target="s21-5" role="button" tabindex="0" aria-label="Bondi Beachの詳細カードへ移動">
   <div class="time">14:30</div>
   <div class="badge">7A</div>
   <div class="stopbody">
@@ -363,7 +372,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop optional">
+<article class="stop optional" data-scroll-target="s21-5" role="button" tabindex="0" aria-label="初日の残り回収プランの詳細カードへ移動">
   <div class="time">13:45</div>
   <div class="badge">7B</div>
   <div class="stopbody">
@@ -373,7 +382,7 @@ footer{max-width:1180px;margin:0 auto 30px;padding:0 14px;font-size:.74rem;color
   </div>
 </article>
 
-<article class="stop evening" onclick="openMap('https://www.google.com/maps/search/?api=1&query=Sydney+Fish+Market+1+Bridge+Road+Glebe')">
+<article class="stop evening" data-scroll-target="s21-6" role="button" tabindex="0" aria-label="新Sydney Fish Marketの詳細カードへ移動">
   <div class="time">17:30</div>
   <div class="badge">8</div>
   <div class="stopbody">
@@ -555,6 +564,40 @@ document.addEventListener('DOMContentLoaded', function() {
       details.classList.toggle('open', willOpen);
       btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
       btn.setAttribute('title', willOpen ? '詳細を閉じる' : '詳細を表示');
+    });
+  });
+
+  function jumpToDetail(row) {
+    var details = document.getElementById(row.getAttribute('data-scroll-target'));
+    if (!details) return;
+    var card = details.closest('.card') || details;
+
+    if (!details.classList.contains('open')) {
+      details.classList.add('open');
+      var toggle = card.querySelector('.detail-toggle');
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('title', '詳細を閉じる');
+      }
+    }
+
+    card.scrollIntoView({behavior: 'smooth', block: 'start'});
+    card.classList.remove('jump-highlight');
+    void card.offsetWidth;
+    card.classList.add('jump-highlight');
+    window.setTimeout(function() { card.classList.remove('jump-highlight'); }, 1700);
+  }
+
+  document.querySelectorAll('.stop[data-scroll-target]').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      if (e.target.closest('a')) return;
+      jumpToDetail(row);
+    });
+    row.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        jumpToDetail(row);
+      }
     });
   });
 });
